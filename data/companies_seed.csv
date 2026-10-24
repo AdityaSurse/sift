@@ -1,0 +1,301 @@
+name,careers_url,industry,hq_country
+OpenAI,https://openai.com/careers,Artificial Intelligence,US
+Anthropic,https://www.anthropic.com/careers,Artificial Intelligence,US
+Google DeepMind,https://deepmind.google/about/careers,Artificial Intelligence,GB
+Mistral AI,https://jobs.lever.co/mistral,Artificial Intelligence,FR
+Cohere,https://jobs.lever.co/cohere,Artificial Intelligence,CA
+Together AI,https://jobs.ashbyhq.com/together,Artificial Intelligence,US
+Perplexity AI,https://jobs.ashbyhq.com/perplexity,Artificial Intelligence,US
+Scale AI,https://scale.com/careers,Artificial Intelligence,US
+Hugging Face,https://apply.workable.com/huggingface,Artificial Intelligence,US
+Runway,https://jobs.lever.co/runwayml,Artificial Intelligence,US
+Character.AI,https://jobs.lever.co/character,Artificial Intelligence,US
+Adept AI,https://jobs.lever.co/adept,Artificial Intelligence,US
+ElevenLabs,https://jobs.ashbyhq.com/elevenlabs,Artificial Intelligence,US
+Midjourney,,Artificial Intelligence,US
+Stability AI,https://jobs.lever.co/stability,Artificial Intelligence,GB
+Cursor (Anysphere),https://jobs.ashbyhq.com/anysphere,Artificial Intelligence,US
+Poolside,https://jobs.ashbyhq.com/poolside,Artificial Intelligence,FR
+Harvey,https://jobs.ashbyhq.com/harvey,Artificial Intelligence,US
+Glean,https://jobs.lever.co/glean,Artificial Intelligence,US
+Baseten,https://jobs.ashbyhq.com/baseten,Artificial Intelligence,US
+Modal,https://modal.com/careers,Artificial Intelligence,US
+Replicate,https://jobs.ashbyhq.com/replicate,Artificial Intelligence,US
+Fireworks AI,https://jobs.ashbyhq.com/fireworks-ai,Artificial Intelligence,US
+Anyscale,https://jobs.lever.co/anyscale,Artificial Intelligence,US
+Weights & Biases,https://boards.greenhouse.io/wandb,Artificial Intelligence,US
+LangChain,https://jobs.ashbyhq.com/langchain,Artificial Intelligence,US
+LlamaIndex,https://jobs.ashbyhq.com/llamaindex,Artificial Intelligence,US
+Pinecone,https://boards.greenhouse.io/pinecone,Artificial Intelligence,US
+Weaviate,https://jobs.lever.co/weaviate,Artificial Intelligence,NL
+Qdrant,https://jobs.ashbyhq.com/qdrant,Artificial Intelligence,DE
+Chroma,https://jobs.ashbyhq.com/chroma,Artificial Intelligence,US
+DeepL,https://jobs.lever.co/deepl,Artificial Intelligence,DE
+Synthesia,https://jobs.ashbyhq.com/synthesia,Artificial Intelligence,GB
+HeyGen,https://jobs.ashbyhq.com/heygen,Artificial Intelligence,US
+Jasper,https://jobs.lever.co/jasper,Artificial Intelligence,US
+Writer,https://jobs.ashbyhq.com/writer,Artificial Intelligence,US
+Snorkel AI,https://boards.greenhouse.io/snorkelai,Artificial Intelligence,US
+C3 AI,https://c3.ai/careers,Artificial Intelligence,US
+DataRobot,https://www.datarobot.com/careers,Artificial Intelligence,US
+H2O.ai,https://h2o.ai/company/careers,Artificial Intelligence,US
+Shield AI,https://jobs.lever.co/shieldai,Artificial Intelligence,US
+Anduril Industries,https://jobs.lever.co/anduril,Artificial Intelligence,US
+Applied Intuition,https://jobs.lever.co/appliedintuition,Artificial Intelligence,US
+Wandb,https://boards.greenhouse.io/wandb,Artificial Intelligence,US
+Labelbox,https://jobs.lever.co/labelbox,Artificial Intelligence,US
+AssemblyAI,https://jobs.ashbyhq.com/assemblyai,Artificial Intelligence,US
+Deepgram,https://jobs.lever.co/deepgram,Artificial Intelligence,US
+Speechify,https://jobs.ashbyhq.com/speechify,Artificial Intelligence,US
+Character AI,https://jobs.lever.co/character,Artificial Intelligence,US
+Pika Labs,,Artificial Intelligence,US
+Krea AI,,Artificial Intelligence,US
+Phind,,Artificial Intelligence,US
+Writer AI,https://jobs.ashbyhq.com/writer,Artificial Intelligence,US
+SambaNova Systems,https://jobs.lever.co/sambanova,Artificial Intelligence,US
+Cerebras Systems,https://cerebras.net/careers,Artificial Intelligence,US
+Groq,https://boards.greenhouse.io/groq,Artificial Intelligence,US
+D-Matrix,https://jobs.lever.co/d-matrix,Artificial Intelligence,US
+Tenstorrent,https://jobs.lever.co/tenstorrent,Artificial Intelligence,CA
+SiFive,https://boards.greenhouse.io/sifive,Artificial Intelligence,US
+Untether AI,https://jobs.lever.co/untetherai,Artificial Intelligence,CA
+Boston Dynamics,https://bostondynamics.wd1.myworkdayjobs.com/Boston_Dynamics,Robotics,US
+Figure AI,https://jobs.ashbyhq.com/figure,Robotics,US
+Agility Robotics,https://jobs.lever.co/agilityrobotics,Robotics,US
+Sanctuary AI,https://jobs.lever.co/sanctuaryai,Robotics,CA
+Apptronik,https://apptronik.com/careers,Robotics,US
+1X Technologies,https://jobs.ashbyhq.com/1x,Robotics,NO
+Skild AI,https://jobs.ashbyhq.com/skild-ai,Robotics,US
+Physical Intelligence,https://jobs.ashbyhq.com/physicalintelligence,Robotics,US
+Covariant,https://boards.greenhouse.io/covariant,Robotics,US
+Robust AI,https://jobs.lever.co/robustai,Robotics,US
+Locus Robotics,https://locusrobotics.com/careers,Robotics,US
+Berkshire Grey,https://www.berkshiregrey.com/careers,Robotics,US
+Symbotic,https://www.symbotic.com/careers,Robotics,US
+KUKA,https://www.kuka.com/en-us/company/careers,Robotics,DE
+ABB Robotics,https://careers.abb/global/en,Robotics,CH
+FANUC,https://www.fanucamerica.com/careers,Robotics,JP
+Yaskawa,https://www.motoman.com/en-us/about/careers,Robotics,JP
+Universal Robots,https://www.universal-robots.com/careers,Robotics,DK
+Franka Robotics,https://franka.de/careers,Robotics,DE
+Waymo,https://waymo.com/careers,Robotics,US
+Cruise,https://jobs.lever.co/cruise,Robotics,US
+Zoox,https://jobs.lever.co/zoox,Robotics,US
+Aurora,https://boards.greenhouse.io/aurora,Robotics,US
+Motional,https://jobs.lever.co/motional,Robotics,US
+Nuro,https://jobs.lever.co/nuro,Robotics,US
+Kodiak Robotics,https://jobs.lever.co/kodiak,Robotics,US
+Torc Robotics,https://torc.ai/careers,Robotics,US
+Outrider,https://jobs.lever.co/outrider,Robotics,US
+Starship Technologies,https://jobs.lever.co/starship,Robotics,EE
+Serve Robotics,https://jobs.lever.co/serverobotics,Robotics,US
+Skydio,https://jobs.lever.co/skydio,Robotics,US
+Zipline,https://jobs.lever.co/zipline,Robotics,US
+Wing,https://wing.com/careers,Robotics,US
+Saildrone,https://jobs.lever.co/saildrone,Robotics,US
+Ocean Aero,https://oceanaero.com/careers,Robotics,US
+Sarcos Robotics,https://sarcos.com/careers,Robotics,US
+Diligent Robotics,https://jobs.lever.co/diligentrobotics,Robotics,US
+Kindred Systems,https://www.kindred.ai/careers,Robotics,US
+Geek+,https://www.geekplus.com/en/careers,Robotics,CN
+GreyOrange,https://www.greyorange.com/careers,Robotics,US
+Exotec,https://www.exotec.com/careers,Robotics,FR
+Vecna Robotics,https://www.vecnarobotics.com/careers,Robotics,US
+Rapid Robotics,https://jobs.lever.co/rapidrobotics,Robotics,US
+Collaborative Robotics,https://jobs.ashbyhq.com/co-robotics,Robotics,US
+Machina Labs,https://jobs.lever.co/machinalabs,Robotics,US
+Cobot,https://jobs.lever.co/cobot,Robotics,US
+Standard Bots,https://jobs.ashbyhq.com/standard-bots,Robotics,US
+Farm-ng,https://farm-ng.com/pages/careers,Robotics,US
+Monarch Tractor,https://jobs.lever.co/monarchtractor,Robotics,US
+Bear Robotics,https://jobs.lever.co/bearrobotics,Robotics,US
+Relativity Space,https://jobs.lever.co/relativityspace,Robotics,US
+Varda Space Industries,https://jobs.lever.co/varda,Robotics,US
+Apex Space,https://jobs.ashbyhq.com/apex,Robotics,US
+Hadrian,https://jobs.ashbyhq.com/hadrian,Robotics,US
+Mach Industries,https://jobs.ashbyhq.com/machindustries,Robotics,US
+Saronic,https://jobs.ashbyhq.com/saronic,Robotics,US
+Castelion,https://jobs.ashbyhq.com/castelion,Robotics,US
+K2 Space,https://jobs.ashbyhq.com/k2space,Robotics,US
+Axiom Space,https://jobs.lever.co/axiomspace,Robotics,US
+ABL Space Systems,https://jobs.lever.co/ablspacesystems,Robotics,US
+NVIDIA,https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite,Semiconductors,US
+AMD,https://careers.amd.com,Semiconductors,US
+Intel,https://jobs.intel.com,Semiconductors,US
+Qualcomm,https://qualcomm.wd5.myworkdayjobs.com/External,Semiconductors,US
+Broadcom,https://broadcom.wd1.myworkdayjobs.com/External_Career,Semiconductors,US
+TSMC,https://tsmc.taleo.net/careersection/tsmc_ext/jobsearch.ftl,Semiconductors,TW
+ASML,https://www.asml.com/en/careers,Semiconductors,NL
+ARM,https://careers.arm.com,Semiconductors,GB
+Applied Materials,https://appliedmaterials.wd1.myworkdayjobs.com/Careers,Semiconductors,US
+Lam Research,https://careers.lamresearch.com,Semiconductors,US
+KLA,https://kla.wd1.myworkdayjobs.com/Search,Semiconductors,US
+Micron,https://micron.wd1.myworkdayjobs.com/External,Semiconductors,US
+Texas Instruments,https://careers.ti.com,Semiconductors,US
+Analog Devices,https://analogdevices.wd1.myworkdayjobs.com/External,Semiconductors,US
+Marvell,https://marvell.wd1.myworkdayjobs.com/MarvellCareers,Semiconductors,US
+Synopsys,https://synopsys.wd1.myworkdayjobs.com/Synopsys_Careers,Semiconductors,US
+Cadence,https://cadence.wd1.myworkdayjobs.com/External_Careers,Semiconductors,US
+Microchip Technology,https://careers.microchip.com,Semiconductors,US
+NXP Semiconductors,https://nxp.wd3.myworkdayjobs.com/careers,Semiconductors,NL
+STMicroelectronics,https://stcareers.st.com,Semiconductors,CH
+Infineon Technologies,https://www.infineon.com/cms/en/careers,Semiconductors,DE
+Renesas Electronics,https://renesas.wd1.myworkdayjobs.com/Renesas_Careers,Semiconductors,JP
+Silicon Labs,https://www.silabs.com/about-us/careers,Semiconductors,US
+ON Semiconductor,https://onsemi.wd1.myworkdayjobs.com/onsemi_careers,Semiconductors,US
+Skyworks Solutions,https://skyworks.wd1.myworkdayjobs.com/skyworks_careers,Semiconductors,US
+Qorvo,https://qorvo.wd1.myworkdayjobs.com/Qorvo_Careers,Semiconductors,US
+Cirrus Logic,https://cirrus.wd1.myworkdayjobs.com/Careers,Semiconductors,US
+Lattice Semiconductor,https://latticesemi.wd5.myworkdayjobs.com/Lattice_Careers,Semiconductors,US
+Lightmatter,https://jobs.lever.co/lightmatter,Semiconductors,US
+Celestial AI,https://jobs.lever.co/celestialai,Semiconductors,US
+Ayar Labs,https://jobs.lever.co/ayarlabs,Semiconductors,US
+Rivos,https://jobs.ashbyhq.com/rivos,Semiconductors,US
+Graphcore,https://www.graphcore.ai/careers,Semiconductors,GB
+Enosemi,,Semiconductors,US
+MatX,https://jobs.ashbyhq.com/matx,Semiconductors,US
+Etched,https://jobs.ashbyhq.com/etched,Semiconductors,US
+Extropic,https://jobs.ashbyhq.com/extropic,Semiconductors,US
+Rain Neuromorphics,https://jobs.lever.co/rain,Semiconductors,US
+Esperanto Technologies,https://www.esperanto.ai/careers,Semiconductors,US
+Mythic AI,https://mythic-ai.com/careers,Semiconductors,US
+Hailo,https://hailo.ai/careers,Semiconductors,IL
+Blaize,https://blaize.com/careers,Semiconductors,US
+EdgeCortix,https://www.edgecortix.com/careers,Semiconductors,JP
+MemryX,https://memryx.com/careers,Semiconductors,US
+SiMa.ai,https://sima.ai/careers,Semiconductors,US
+Axelera AI,https://jobs.ashbyhq.com/axelera-ai,Semiconductors,NL
+DeepX,https://deepx.ai/careers,Semiconductors,KR
+Rebellions,https://rebellions.ai/careers,Semiconductors,KR
+FuriosaAI,https://furiosa.ai/careers,Semiconductors,KR
+Tenstorrent AI,https://jobs.lever.co/tenstorrent,Semiconductors,CA
+Apple,https://jobs.apple.com,Hardware,US
+Cisco,https://jobs.cisco.com,Hardware,US
+Arista Networks,https://www.arista.com/en/careers,Hardware,US
+Juniper Networks,https://juniper.wd1.myworkdayjobs.com/Careers,Hardware,US
+Western Digital,https://jobs.smartrecruiters.com/WesternDigital,Hardware,US
+Seagate,https://seagate.wd5.myworkdayjobs.com/Seagate_Careers,Hardware,US
+Espressif Systems,https://www.espressif.com/en/company/careers,Embedded Systems,CN
+Nordic Semiconductor,https://www.nordicsemi.com/About-us/Careers,Embedded Systems,NO
+Garmin,https://garmin.wd1.myworkdayjobs.com/GarminCareers,Hardware,US
+DJI,https://we.dji.com/en/jobs,Hardware,CN
+GoPro,https://jobs.lever.co/gopro,Hardware,US
+Framework Computer,https://jobs.lever.co/framework,Hardware,US
+Teenage Engineering,https://teenage.engineering/jobs,Hardware,SE
+Nothing,https://jobs.lever.co/nothing,Hardware,GB
+Sonos,https://jobs.lever.co/sonos,Hardware,US
+Bose,https://bose.wd1.myworkdayjobs.com/Bose_Careers,Hardware,US
+Dyson,https://careers.dyson.com,Hardware,GB
+iRobot,https://irobot.wd5.myworkdayjobs.com/iRobot,Hardware,US
+Anker Innovations,https://www.anker.com/careers,Hardware,CN
+Particle,https://jobs.lever.co/particle,Embedded Systems,US
+Adafruit,,Embedded Systems,US
+Raspberry Pi,https://www.raspberrypi.com/careers,Embedded Systems,GB
+Arduino,https://www.arduino.cc/en/careers,Embedded Systems,IT
+Bosch,https://jobs.smartrecruiters.com/BoschGroup,Hardware,DE
+Continental,https://www.continental-jobs.com,Hardware,DE
+Denso,https://www.denso.com/global/en/careers,Hardware,JP
+Aptiv,https://aptiv.wd1.myworkdayjobs.com/Aptiv_Careers,Hardware,IE
+Magna International,https://jobs.smartrecruiters.com/MagnaInternational,Hardware,CA
+ZF Group,https://jobs.zf.com,Hardware,DE
+Valeo,https://valeo.wd3.myworkdayjobs.com/en-US/valeo_careers,Hardware,FR
+Mobileye,https://jobs.lever.co/mobileye,Hardware,IL
+Obeo,,Embedded Systems,FR
+Toradex,https://www.toradex.com/careers,Embedded Systems,CH
+Phytec,https://www.phytec.eu/about-us/career,Embedded Systems,DE
+Digi International,https://www.digi.com/about-digi/careers,Embedded Systems,US
+Advantech,https://www.advantech.com/careers,Embedded Systems,TW
+Kontron,https://www.kontron.com/en/about-us/careers,Embedded Systems,DE
+Eurotech,https://www.eurotech.com/careers,Embedded Systems,IT
+Sierra Wireless,https://www.sierrawireless.com/careers,Embedded Systems,CA
+Telit Cinterion,https://www.telit.com/careers,Embedded Systems,US
+Stripe,https://stripe.com/jobs,Software,US
+Linear,https://linear.app/careers,Software,US
+Vercel,https://vercel.com/careers,Software,US
+Supabase,https://jobs.ashbyhq.com/supabase,Software,SG
+Datadog,https://boards.greenhouse.io/datadog,Software,US
+Cloudflare,https://boards.greenhouse.io/cloudflare,Software,US
+GitHub,https://github.com/about/careers,Software,US
+GitLab,https://about.gitlab.com/jobs,Software,US
+HashiCorp,https://jobs.lever.co/hashicorp,Software,US
+Retool,https://jobs.lever.co/retool,Software,US
+Docker,https://boards.greenhouse.io/docker,Software,US
+Postman,https://boards.greenhouse.io/postman,Software,US
+MongoDB,https://boards.greenhouse.io/mongodb,Software,US
+Elastic,https://boards.greenhouse.io/elastic,Software,US
+Redis,https://redis.com/company/careers,Software,US
+Sentry,https://boards.greenhouse.io/sentry,Software,US
+Temporal,https://jobs.ashbyhq.com/temporal,Software,US
+Neon,https://jobs.ashbyhq.com/neon,Software,US
+PlanetScale,https://jobs.lever.co/planetscale,Software,US
+Cockroach Labs,https://boards.greenhouse.io/cockroachlabs,Software,US
+LaunchDarkly,https://boards.greenhouse.io/launchdarkly,Software,US
+dbt Labs,https://boards.greenhouse.io/dbtlabs,Software,US
+Hex,https://jobs.ashbyhq.com/hex,Software,US
+Tailscale,https://jobs.ashbyhq.com/tailscale,Software,CA
+Pulumi,https://jobs.lever.co/pulumi,Software,US
+Warp,https://jobs.ashbyhq.com/warp,Software,US
+Raycast,https://jobs.ashbyhq.com/raycast,Software,GB
+Zed Industries,https://zed.dev/jobs,Software,US
+Render,https://jobs.lever.co/render,Software,US
+Railway,https://jobs.ashbyhq.com/railway,Software,US
+Fly.io,https://fly.io/jobs,Software,US
+Sourcegraph,https://boards.greenhouse.io/sourcegraph,Software,US
+Prisma,https://jobs.lever.co/prisma,Software,DE
+Inngest,https://jobs.ashbyhq.com/inngest,Software,US
+Resend,https://jobs.ashbyhq.com/resend,Software,US
+Clerk,https://jobs.ashbyhq.com/clerk,Software,US
+Twilio,https://boards.greenhouse.io/twilio,Software,US
+Snowflake,https://careers.snowflake.com,Software,US
+Databricks,https://boards.greenhouse.io/databricks,Software,US
+Atlassian,https://www.atlassian.com/company/careers,Software,AU
+Asana,https://boards.greenhouse.io/asana,Software,US
+Notion,https://jobs.lever.co/notion,Software,US
+Airtable,https://boards.greenhouse.io/airtable,Software,US
+Miro,https://miro.com/careers,Software,NL
+Figma,https://jobs.lever.co/figma,Software,US
+Canva,https://www.canva.com/careers,Software,AU
+Zapier,https://boards.greenhouse.io/zapier,Software,US
+Webflow,https://boards.greenhouse.io/webflow,Software,US
+Grammarly,https://boards.greenhouse.io/grammarly,Software,US
+Discord,https://boards.greenhouse.io/discord,Software,US
+Slack,https://slack.com/careers,Software,US
+Spotify,https://www.lifeatspotify.com/jobs,Software,SE
+Netflix,https://jobs.netflix.com,Software,US
+Airbnb,https://careers.airbnb.com,Software,US
+Uber,https://www.uber.com/us/en/careers,Software,US
+Lyft,https://jobs.lever.co/lyft,Software,US
+DoorDash,https://careers.doordash.com,Software,US
+Instacart,https://instacart.careers,Software,US
+Pinterest,https://www.pinterestcareers.com,Software,US
+Snap,https://careers.snap.com,Software,US
+Reddit,https://boards.greenhouse.io/reddit,Software,US
+Box,https://boards.greenhouse.io/box,Software,US
+Dropbox,https://jobs.lever.co/dropbox,Software,US
+Zoom,https://careers.zoom.us,Software,US
+HubSpot,https://www.hubspot.com/careers,Software,US
+Zendesk,https://jobs.smartrecruiters.com/Zendesk,Software,US
+Splunk,https://www.splunk.com/en_us/careers.html,Software,US
+Dynatrace,https://careers.dynatrace.com,Software,AT
+New Relic,https://newrelic.com/about/careers,Software,US
+PagerDuty,https://boards.greenhouse.io/pagerduty,Software,US
+Fastly,https://boards.greenhouse.io/fastly,Software,US
+Akamai,https://www.akamai.com/careers,Software,US
+CrowdStrike,https://crowdstrike.wd5.myworkdayjobs.com/crowdstrikecareers,Software,US
+Palo Alto Networks,https://jobs.paloaltonetworks.com,Software,US
+Zscaler,https://www.zscaler.com/careers,Software,US
+Fortinet,https://www.fortinet.com/corporate/careers,Software,US
+Check Point,https://careers.checkpoint.com,Software,IL
+Tanium,https://boards.greenhouse.io/tanium,Software,US
+Wiz,https://jobs.ashbyhq.com/wiz,Software,US
+Snyk,https://jobs.lever.co/snyk,Software,GB
+1Password,https://jobs.lever.co/1password,Software,CA
+Bitwarden,https://jobs.ashbyhq.com/bitwarden,Software,US
+PostHog,https://posthog.com/careers,Software,US
+Grafana Labs,https://boards.greenhouse.io/grafanalabs,Software,US
+ClickHouse,https://boards.greenhouse.io/clickhouse,Software,US
+DuckDB Labs,https://duckdb.org,Software,NL
+Timescale,https://jobs.lever.co/timescale,Software,US
+ScyllaDB,https://www.scylladb.com/careers,Software,IL
+StarTree,https://jobs.ashbyhq.com/startree,Software,US
+Impactive,https://jobs.lever.co/impactive,Software,US

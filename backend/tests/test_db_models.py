@@ -18,8 +18,12 @@ from app.db.models import (
     RemoteType,
 )
 
+from sqlalchemy.pool import NullPool
+
 settings = get_settings()
-test_engine = create_async_engine(settings.sift_test_database_url, echo=False)
+test_engine = create_async_engine(
+    settings.sift_test_database_url, echo=False, poolclass=NullPool
+)
 TestSessionLocal = async_sessionmaker(
     bind=test_engine, class_=AsyncSession, expire_on_commit=False
 )

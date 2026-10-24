@@ -34,7 +34,9 @@ ENV/
 *.db
 *.sqlite3
 *.sqlite
-data/
+data/*.db
+data/*.sqlite
+data/*.sqlite3
 
 # Node / Frontend
 node_modules/
