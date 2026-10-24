@@ -24,8 +24,12 @@ class Settings(BaseSettings):
 
     # Storage
     sift_database_url: str = Field(
-        default="sqlite+aiosqlite:///./data/sift.db",
-        description="Async database connection string"
+        default="postgresql+asyncpg://adityasurse@localhost:5432/sift_dev",
+        description="Async database connection string for Supabase / PostgreSQL"
+    )
+    sift_test_database_url: str = Field(
+        default="postgresql+asyncpg://adityasurse@localhost:5432/sift_test",
+        description="Async database connection string for test runs"
     )
 
     # Polite Crawler Configuration
