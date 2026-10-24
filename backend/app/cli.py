@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import csv
+import logging
 import re
 import sys
 import time
@@ -11,19 +12,25 @@ from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 import httpx
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.core.config import get_settings
 from app.crawlers.detector import detect_ats
-from app.db.models import ATSType, Company
+from app.db.models import ATSType, Company, CrawlRun
 from app.db.session import AsyncSessionLocal
+from app.services.ingest import ingest_company
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%H:%M:%S",
+)
+logger = logging.getLogger("sift.cli")
 
 
 def generate_slug(name: str) -> str:
-    """Converts a company name to a URL-safe, predictable slug.
-    
-    Why: Stable primary identifiers avoid duplication across repeated CSV import runs.
-    """
+    """Converts a company name to a URL-safe, predictable slug."""
     cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", name.strip().lower())
     return cleaned.strip("-")
 
@@ -56,7 +63,11 @@ class DomainRateLimiter:
             self.last_hit[domain] = time.monotonic()
 
 
-async def process_company(
+# ---------------------------------------------------------------------------
+# import-companies Command
+# ---------------------------------------------------------------------------
+
+async def process_company_import(
     row: dict,
     semaphore: asyncio.Semaphore,
     limiter: DomainRateLimiter,
@@ -114,19 +125,20 @@ async def process_company(
     }
 
 
-async def import_companies(csv_path: str, max_concurrency: int = 10, limit: Optional[int] = None) -> None:
+async def import_companies(
+    csv_path: str, max_concurrency: int = 10, limit: Optional[int] = None
+) -> None:
     """Loads companies from CSV, detects ATS types concurrently, and persists to DB."""
     path = Path(csv_path)
     if not path.is_file():
-        # Fall back to root-relative path if run from backend/
         alt_path = Path("..") / csv_path
         if alt_path.is_file():
             path = alt_path
         else:
-            print(f"Error: CSV file not found at {csv_path} or {alt_path}")
+            logger.error(f"CSV file not found at {csv_path} or {alt_path}")
             sys.exit(1)
 
-    print(f"Reading companies from: {path.resolve()}")
+    logger.info(f"Reading companies from: {path.resolve()}")
     rows: List[dict] = []
     with open(path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -137,7 +149,7 @@ async def import_companies(csv_path: str, max_concurrency: int = 10, limit: Opti
         rows = rows[:limit]
 
     total_companies = len(rows)
-    print(f"Loaded {total_companies} companies for import (Max concurrency: {max_concurrency}).")
+    logger.info(f"Loaded {total_companies} companies for import (Max concurrency: {max_concurrency}).")
 
     semaphore = asyncio.Semaphore(max_concurrency)
     limiter = DomainRateLimiter(delay_sec=1.5)
@@ -152,22 +164,19 @@ async def import_companies(csv_path: str, max_concurrency: int = 10, limit: Opti
         follow_redirects=True,
     ) as client:
         tasks = [
-            process_company(row, semaphore, limiter, client)
+            process_company_import(row, semaphore, limiter, client)
             for row in rows
         ]
-        
-        # Track progress as tasks complete
+
         for coro in asyncio.as_completed(tasks):
             res = await coro
             results.append(res)
             done = len(results)
             if done % 25 == 0 or done == total_companies:
-                print(f"  Processed {done}/{total_companies} companies ({done / total_companies * 100:.1f}%)...")
+                logger.info(f"Processed {done}/{total_companies} companies ({done / total_companies * 100:.1f}%)...")
 
     duration = time.time() - start_time
-    print(f"\nImport completed in {duration:.2f} seconds ({len(results)} companies upserted).\n")
-
-    # Summary table generation
+    logger.info(f"Import completed in {duration:.2f} seconds ({len(results)} companies upserted).")
     print_summary_table(results)
 
 
@@ -176,7 +185,7 @@ def print_summary_table(results: List[dict]) -> None:
     counts = Counter(r["ats_type"].value for r in results)
     total = len(results)
 
-    print("+" + "-" * 22 + "+" + "-" * 10 + "+" + "-" * 12 + "+" + "-" * 32 + "+")
+    print("\n+" + "-" * 22 + "+" + "-" * 10 + "+" + "-" * 12 + "+" + "-" * 32 + "+")
     print(f"| {'ATS Type':<20} | {'Count':<8} | {'Share':<10} | {'Sample Companies':<30} |")
     print("+" + "=" * 22 + "+" + "=" * 10 + "+" + "=" * 12 + "+" + "=" * 32 + "+")
 
@@ -190,13 +199,119 @@ def print_summary_table(results: List[dict]) -> None:
 
     print("+" + "-" * 22 + "+" + "-" * 10 + "+" + "-" * 12 + "+" + "-" * 32 + "+")
     print(f"| {'TOTAL':<20} | {total:<8} | {'100.0%':<10} | {'':<30} |")
-    print("+" + "-" * 22 + "+" + "-" * 10 + "+" + "-" * 12 + "+" + "-" * 32 + "+")
+    print("+" + "-" * 22 + "+" + "-" * 10 + "+" + "-" * 12 + "+" + "-" * 32 + "+\n")
+
+
+# ---------------------------------------------------------------------------
+# crawl Command (with exponential backoff and polite concurrency)
+# ---------------------------------------------------------------------------
+
+async def crawl_single_company_with_retry(
+    company: Company,
+    semaphore: asyncio.Semaphore,
+    limiter: DomainRateLimiter,
+    client: httpx.AsyncClient,
+    max_retries: int = 3,
+) -> CrawlRun:
+    """Crawls a single company board with polite domain rate limiting and exponential retry."""
+    async with semaphore:
+        if company.careers_url:
+            await limiter.throttle(company.careers_url)
+
+        attempt = 0
+        backoff_sec = 1.0
+
+        while attempt < max_retries:
+            attempt += 1
+            async with AsyncSessionLocal() as session:
+                # Re-fetch company within local session
+                comp = await session.get(Company, company.id)
+                if not comp:
+                    continue
+
+                crawl_run = await ingest_company(comp, session=session, client=client)
+                if crawl_run.status.value == "success" or attempt >= max_retries:
+                    return crawl_run
+
+                logger.warning(
+                    f"Retry {attempt}/{max_retries} for {company.name} in {backoff_sec}s due to previous error: {crawl_run.error_message}"
+                )
+                await asyncio.sleep(backoff_sec)
+                backoff_sec *= 2.0
+
+        return crawl_run
+
+
+async def execute_crawl(
+    company_slug: Optional[str] = None,
+    all_companies: bool = False,
+    max_concurrency: int = 5,
+) -> None:
+    """Executes the ingestion pipeline across selected or all companies."""
+    async with AsyncSessionLocal() as session:
+        if company_slug:
+            stmt = select(Company).where(Company.slug == company_slug.strip().lower())
+            result = await session.execute(stmt)
+            companies = result.scalars().all()
+            if not companies:
+                logger.error(f"Company with slug '{company_slug}' not found in database.")
+                return
+        elif all_companies:
+            stmt = select(Company).where(Company.is_active.is_(True))
+            result = await session.execute(stmt)
+            companies = result.scalars().all()
+        else:
+            logger.error("Must specify either --all or --company <slug>")
+            return
+
+    total = len(companies)
+    logger.info(f"Initiating crawl run across {total} companies (Concurrency: {max_concurrency}).")
+
+    semaphore = asyncio.Semaphore(max_concurrency)
+    limiter = DomainRateLimiter(delay_sec=1.5)
+    settings = get_settings()
+
+    start_time = time.time()
+    crawl_results: List[CrawlRun] = []
+
+    async with httpx.AsyncClient(
+        headers={"User-Agent": settings.sift_crawler_user_agent},
+        timeout=15.0,
+        follow_redirects=True,
+    ) as client:
+        tasks = [
+            crawl_single_company_with_retry(company, semaphore, limiter, client)
+            for company in companies
+        ]
+
+        for coro in asyncio.as_completed(tasks):
+            run = await coro
+            crawl_results.append(run)
+            done = len(crawl_results)
+            logger.info(
+                f"Progress: {done}/{total} companies | Last: status={run.status.value}, found={run.jobs_found}, new={run.jobs_new}, closed={run.jobs_closed}"
+            )
+
+    duration = time.time() - start_time
+    total_found = sum(r.jobs_found for r in crawl_results)
+    total_new = sum(r.jobs_new for r in crawl_results)
+    total_closed = sum(r.jobs_closed for r in crawl_results)
+    successful = sum(1 for r in crawl_results if r.status.value == "success")
+
+    print("\n" + "=" * 60)
+    print(f"CRAWL COMPLETE in {duration:.2f} seconds")
+    print(f"Companies Processed: {total} (Success: {successful}, Failed: {total - successful})")
+    print(f"Total Postings Found:  {total_found}")
+    print(f"New Postings Added:    {total_new}")
+    print(f"Closed (Ghost) Jobs:   {total_closed}")
+    print("=" * 60 + "\n")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Sift Company Registry & ATS Detection CLI")
+    parser = argparse.ArgumentParser(description="Sift Crawler & Company Ingestion CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    # import-companies command
     import_parser = subparsers.add_parser("import-companies", help="Import companies from CSV and detect ATS")
     import_parser.add_argument(
         "--csv-path",
@@ -216,10 +331,32 @@ def main() -> None:
         help="Optional limit on number of rows to process",
     )
 
+    # crawl command
+    crawl_parser = subparsers.add_parser("crawl", help="Run ingestion pipeline on company career boards")
+    crawl_parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Crawl all active companies in the registry",
+    )
+    crawl_parser.add_argument(
+        "--company",
+        type=str,
+        default=None,
+        help="Slug of the specific company to crawl (e.g. 'linear', 'spotify')",
+    )
+    crawl_parser.add_argument(
+        "--max-concurrency",
+        type=int,
+        default=5,
+        help="Max simultaneous companies crawling (default: 5)",
+    )
+
     args = parser.parse_args()
 
     if args.command == "import-companies":
         asyncio.run(import_companies(args.csv_path, args.max_concurrency, args.limit))
+    elif args.command == "crawl":
+        asyncio.run(execute_crawl(args.company, args.all, args.max_concurrency))
 
 
 if __name__ == "__main__":
