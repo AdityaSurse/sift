@@ -1,0 +1,1 @@
+"""Sift application package root."""
