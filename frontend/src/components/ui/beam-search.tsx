@@ -48,7 +48,7 @@ export function BeamSearch({
   onSubmit,
   placeholder = "Search…",
   alwaysOn = false,
-  colorVariant = "colorful",
+  colorVariant = "ocean",
   theme = "auto",
   trailing,
   className,
@@ -74,11 +74,11 @@ export function BeamSearch({
     >
       <label
         className={cn(
-          "flex h-12 w-full items-center gap-3 rounded-xl border border-black/10 bg-white px-3.5 transition-colors dark:border-white/12 dark:bg-neutral-950",
-          focused && "border-black/20 dark:border-white/20",
+          "flex h-12 w-full items-center gap-3 rounded-full border border-border bg-surface px-4 transition-colors shadow-card",
+          focused && "border-accent ring-2 ring-accent/20",
         )}
       >
-        <Search className="size-4 shrink-0 text-neutral-400" aria-hidden />
+        <Search className="size-4 shrink-0 text-accent" aria-hidden />
         <input
           ref={inputRef}
           type="search"
@@ -91,7 +91,7 @@ export function BeamSearch({
             if (event.key === "Enter") onSubmit?.(current);
             if (event.key === "Escape") update("");
           }}
-          className="min-w-0 flex-1 bg-transparent text-[15px] text-neutral-900 outline-none placeholder:text-neutral-400 dark:text-neutral-100 dark:placeholder:text-neutral-500 [&::-webkit-search-cancel-button]:hidden"
+          className="min-w-0 flex-1 bg-transparent text-[15px] text-text outline-none placeholder:text-text-muted/60 [&::-webkit-search-cancel-button]:hidden"
         />
         {current ? (
           <button
@@ -102,7 +102,7 @@ export function BeamSearch({
               update("");
               inputRef.current?.focus();
             }}
-            className="flex size-6 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-700 dark:hover:bg-white/8 dark:hover:text-neutral-200"
+            className="flex size-6 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-surface-subdued hover:text-text"
           >
             <X className="size-3.5" />
           </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, HelpCircle } from 'lucide-react';
 
 interface FaqItem {
   id: string;
@@ -52,21 +52,22 @@ export const FaqAccordion: React.FC = () => {
   };
 
   return (
-    <section className="py-16 sm:py-24 border-t border-border/80">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+    <section className="py-20 sm:py-28 border-t border-border/70 bg-bg">
+      <div className="max-w-3xl mx-auto px-4 sm:px-8">
         <div className="text-center mb-12 sm:mb-16">
-          <span className="font-mono text-12 text-accent uppercase tracking-widest font-medium">
-            Frequently Asked
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent-subdued px-3.5 py-1 font-sans text-12 font-medium text-accent uppercase tracking-wider">
+            <HelpCircle size={13} strokeWidth={2} />
+            <span>Candidate FAQs</span>
           </span>
-          <h2 className="font-serif text-36 sm:text-44 text-text font-normal tracking-tight mt-2 mb-3">
+          <h2 className="font-serif text-36 sm:text-48 text-text font-normal tracking-tight mt-3 mb-3">
             Questions & <span className="italic">answers</span>.
           </h2>
-          <p className="font-sans text-15 text-text-muted">
+          <p className="font-sans text-16 text-text-muted">
             Everything you need to know about Sift's engine, crawl etiquette, and indexing principles.
           </p>
         </div>
 
-        <div className="rounded-surface border border-border/80 divide-y divide-border/60 bg-surface/40">
+        <div className="rounded-2xl border border-border/80 divide-y divide-border/60 bg-surface shadow-card overflow-hidden">
           {FAQ_ITEMS.map((item) => {
             const isOpen = openId === item.id;
             return (
@@ -75,22 +76,22 @@ export const FaqAccordion: React.FC = () => {
                   type="button"
                   onClick={() => toggleItem(item.id)}
                   aria-expanded={isOpen}
-                  className="w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left hover:bg-surface/80 transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+                  className="w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left hover:bg-surface-subdued/50 transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
-                  <span className="font-sans text-15 sm:text-16 font-medium text-text">
+                  <span className={`font-sans text-15 sm:text-16 font-semibold transition-colors ${
+                    isOpen ? 'text-accent' : 'text-text'
+                  }`}>
                     {item.question}
                   </span>
-                  <ChevronDown
-                    size={16}
-                    strokeWidth={1.5}
-                    className={`text-text-muted flex-shrink-0 transition-transform duration-150 ease-editorial ${
-                      isOpen ? 'rotate-180 text-accent' : ''
-                    }`}
-                  />
+                  <div className={`p-1 rounded-full transition-transform duration-200 ${
+                    isOpen ? 'rotate-180 bg-accent-subdued text-accent' : 'text-text-muted'
+                  }`}>
+                    <ChevronDown size={16} strokeWidth={2} />
+                  </div>
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 font-sans text-14 text-text-muted leading-relaxed border-t border-border/30 bg-surface/30">
+                  <div className="px-5 sm:px-6 pb-6 pt-1 font-sans text-14 text-text-muted leading-relaxed border-t border-border/40 bg-surface-subdued/20">
                     {item.answer}
                   </div>
                 )}

@@ -54,15 +54,19 @@ export const JobRow: React.FC<JobRowProps> = ({
       tabIndex={0}
       onClick={handleRowClick}
       onKeyDown={handleKeyDown}
-      className={`group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 border-b border-border/70 bg-bg hover:bg-surface/50 transition-colors duration-150 ease-editorial cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
-        isSelected ? 'bg-surface/80 border-l-2 border-l-accent' : ''
+      className={`group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-4.5 border-b border-border/70 bg-surface hover:bg-surface-subdued/70 transition-all duration-150 ease-editorial cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
+        isSelected ? 'bg-accent-subdued/40 border-l-4 border-l-accent' : ''
       }`}
     >
       {/* Left Column: Monogram + Information Hierarchy */}
-      <div className="flex items-start gap-3 min-w-0">
-        {/* Company Monogram: Tinted letter square without logo clutter */}
+      <div className="flex items-start gap-3.5 min-w-0">
+        {/* Company Monogram: High contrast letter tile */}
         <div
-          className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded border border-border/80 bg-surface font-mono text-13 font-semibold text-text select-none group-hover:border-border-strong transition-colors duration-150 ease-editorial"
+          className={`flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-xl font-sans text-14 font-bold select-none transition-all duration-150 ease-editorial ${
+            isSelected
+              ? 'bg-accent text-white shadow-sm'
+              : 'border border-border/80 bg-surface-subdued text-text group-hover:border-accent/40 group-hover:text-accent'
+          }`}
           aria-hidden="true"
         >
           {monogram}
@@ -72,17 +76,17 @@ export const JobRow: React.FC<JobRowProps> = ({
         <div className="min-w-0 flex-1">
           {/* Title & Employer */}
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <h3 className="font-sans text-15 font-medium text-text group-hover:text-accent transition-colors duration-150 ease-editorial leading-snug">
+            <h3 className="font-sans text-15 font-semibold text-text group-hover:text-accent transition-colors duration-150 ease-editorial leading-snug">
               {job.title}
             </h3>
-            <span className="font-sans text-13 text-text-muted">at {job.company_name}</span>
+            <span className="font-sans text-13 text-text-muted font-medium">at {job.company_name}</span>
           </div>
 
-          {/* Geist Mono Metadata Line */}
-          <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-12 text-text-muted">
+          {/* Metadata Line */}
+          <div className="mt-1 flex flex-wrap items-center gap-1.5 font-sans text-12 text-text-muted">
             {job.location && (
               <span className="flex items-center gap-1">
-                <MapPin size={11} strokeWidth={1.5} className="text-text-muted/60 flex-shrink-0" />
+                <MapPin size={11} strokeWidth={1.5} className="text-text-muted/70 flex-shrink-0" />
                 <span>{job.location}</span>
               </span>
             )}
@@ -118,7 +122,7 @@ export const JobRow: React.FC<JobRowProps> = ({
 
           {/* Subtle Match Rationale Line */}
           {job.match_reasons && job.match_reasons.length > 0 && (
-            <div className="mt-1.5 flex items-center gap-1.5 font-mono text-11 text-text-muted/80">
+            <div className="mt-1.5 flex items-center gap-1.5 font-sans text-11 text-accent font-medium">
               <span className="h-1.5 w-1.5 rounded-full bg-accent flex-shrink-0" />
               <span className="truncate">{job.match_reasons.slice(0, 3).join(' · ')}</span>
             </div>
@@ -126,7 +130,7 @@ export const JobRow: React.FC<JobRowProps> = ({
         </div>
       </div>
 
-      {/* Right Column: Skills & Direct Actions */}
+      {/* Right Column: Skills, Posted Date & Direct Actions */}
       <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3 flex-shrink-0 pt-2 sm:pt-0 border-t border-border/30 sm:border-t-0">
         {/* Up to 3 Skill Chips */}
         {job.skills && job.skills.length > 0 && (
@@ -134,7 +138,7 @@ export const JobRow: React.FC<JobRowProps> = ({
             {job.skills.slice(0, 3).map((skill) => (
               <span
                 key={skill}
-                className="rounded border border-border/60 bg-surface/60 px-1.5 py-0.5 font-mono text-11 text-text-muted"
+                className="rounded-full border border-border/70 bg-surface-subdued px-2.5 py-0.5 font-mono text-11 text-text-muted font-medium"
               >
                 {skill}
               </span>
@@ -143,7 +147,7 @@ export const JobRow: React.FC<JobRowProps> = ({
         )}
 
         {/* Posted relative date */}
-        <span className="font-mono text-11 text-text-muted/70 whitespace-nowrap hidden xs:inline select-none">
+        <span className="font-sans text-12 text-text-muted/80 whitespace-nowrap hidden xs:inline select-none">
           {formatRelativeDate(job.posted_at)}
         </span>
 
@@ -155,10 +159,10 @@ export const JobRow: React.FC<JobRowProps> = ({
               e.stopPropagation();
               onToggleSave(job);
             }}
-            className={`p-1.5 rounded border border-border transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
+            className={`p-2 rounded-full border transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
               isSaved
                 ? 'bg-accent-subdued text-accent border-accent/40'
-                : 'bg-surface text-text-muted hover:text-text hover:border-border-strong'
+                : 'bg-surface text-text-muted border-border hover:text-text hover:border-border-strong'
             }`}
             title={isSaved ? 'Remove from saved' : 'Save job'}
             aria-label={isSaved ? 'Remove from saved' : 'Save job'}
@@ -166,17 +170,17 @@ export const JobRow: React.FC<JobRowProps> = ({
             <Bookmark size={13} strokeWidth={1.5} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
 
-          {/* External Apply Link */}
+          {/* External Apply Link Pill */}
           <a
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1 rounded border border-border bg-surface px-2.5 py-1 font-sans text-12 text-text hover:border-accent hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="flex items-center gap-1 rounded-full border border-border bg-surface px-3 py-1 font-sans text-12 font-medium text-text hover:border-accent hover:text-accent transition-colors duration-150 ease-editorial shadow-xs"
             title="Open direct apply page in new tab"
           >
             <span>Apply</span>
-            <ExternalLink size={12} strokeWidth={1.5} />
+            <ExternalLink size={11} strokeWidth={1.5} />
           </a>
         </div>
       </div>

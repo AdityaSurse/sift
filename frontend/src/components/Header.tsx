@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bookmark, Briefcase, Building2, Command, Moon, Sun } from 'lucide-react';
+import {
+  Bookmark,
+  Briefcase,
+  Building2,
+  Command,
+  Moon,
+  Sparkles,
+  Sun,
+} from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useSavedJobs } from '../hooks/useSavedJobs';
 
@@ -10,8 +18,8 @@ interface HeaderProps {
 }
 
 /**
- * Editorial top navigation bar adhering to /docs/design-system.md.
- * Why: Surfaces core discovery routes (Jobs, Companies, Saved) and quick actions quietly.
+ * Sift Editorial Navbar
+ * Why: High-contrast header with Sift geometric mark, navigation pills, and primary action.
  */
 export const Header: React.FC<HeaderProps> = ({
   onOpenCommandPalette,
@@ -25,27 +33,31 @@ export const Header: React.FC<HeaderProps> = ({
   const isSavedActive = location.pathname === '/saved';
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border/80 bg-bg px-4 sm:px-6 py-2.5 transition-colors duration-150 ease-editorial">
+    <header className="sticky top-0 z-30 w-full border-b border-border/70 bg-bg px-4 sm:px-8 py-3 transition-colors duration-150 ease-editorial">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        {/* Brand Wordmark & Nav */}
-        <div className="flex items-center gap-6 sm:gap-8">
+        {/* Brand Mark & Main Nav */}
+        <div className="flex items-center gap-6 sm:gap-10">
           <Link
             to="/"
-            className="flex items-center gap-2 text-text hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+            className="flex items-center gap-2 text-text hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-full"
           >
-            <span className="font-mono text-15 font-bold tracking-wider text-accent">SIFT</span>
-            <span className="hidden sm:inline font-mono text-11 text-text-muted/60">/</span>
-            <span className="hidden sm:inline font-mono text-11 text-text-muted">career index</span>
+            {/* Sift Geometric Spark Mark */}
+            <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-accent-subdued text-accent border border-accent/30 font-bold text-14 select-none">
+              <Sparkles size={15} strokeWidth={2} />
+            </div>
+            <span className="font-sans text-16 font-bold tracking-tight text-text">
+              Sift
+            </span>
           </Link>
 
-          {/* Navigation Links: Jobs, Companies, Saved */}
-          <nav className="flex items-center gap-1 sm:gap-2 text-13 font-sans">
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-1 sm:gap-1.5 text-13 font-sans">
             <Link
               to="/jobs"
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors duration-150 ease-editorial ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-150 ease-editorial ${
                 isJobsActive
-                  ? 'text-text font-medium bg-surface border border-border/80'
-                  : 'text-text-muted hover:text-text'
+                  ? 'text-text font-medium bg-surface border border-border shadow-sm'
+                  : 'text-text-muted hover:text-text hover:bg-surface-subdued'
               }`}
             >
               <Briefcase size={13} strokeWidth={1.5} />
@@ -55,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onOpenCompanies}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded text-text-muted hover:text-text transition-colors duration-150 ease-editorial"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-text-muted hover:text-text hover:bg-surface-subdued transition-colors duration-150 ease-editorial"
             >
               <Building2 size={13} strokeWidth={1.5} />
               <span>Companies</span>
@@ -63,10 +75,10 @@ export const Header: React.FC<HeaderProps> = ({
 
             <Link
               to="/saved"
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors duration-150 ease-editorial ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-150 ease-editorial ${
                 isSavedActive
-                  ? 'text-text font-medium bg-surface border border-border/80'
-                  : 'text-text-muted hover:text-text'
+                  ? 'text-text font-medium bg-surface border border-border shadow-sm'
+                  : 'text-text-muted hover:text-text hover:bg-surface-subdued'
               }`}
             >
               <Bookmark size={13} strokeWidth={1.5} />
@@ -80,36 +92,39 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2">
-          {/* Command Palette Trigger */}
+        {/* Right Actions: Cmd+K, Theme Toggle, Primary Pill CTA */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Search Hotkey Trigger */}
           <button
-            id="cmd-palette-btn"
+            type="button"
             onClick={onOpenCommandPalette}
-            className="hidden sm:flex items-center gap-2 rounded border border-border/80 bg-surface/60 px-2.5 py-1 font-mono text-12 text-text-muted hover:border-border-strong hover:text-text transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-            title="Open Command Palette (Cmd+K)"
+            className="hidden md:flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-12 text-text-muted hover:border-border-strong hover:text-text transition-colors duration-150 ease-editorial"
+            title="Search commands (⌘K)"
           >
             <Command size={12} strokeWidth={1.5} />
-            <span className="text-12">Search</span>
-            <kbd className="rounded border border-border px-1 py-0.2 font-mono text-11 text-text-muted">
+            <span className="font-sans text-12">Search</span>
+            <kbd className="rounded border border-border bg-bg/80 px-1 py-0.2 text-10 text-text-muted">
               ⌘K
             </kbd>
           </button>
 
           {/* Theme Toggle */}
           <button
-            id="theme-toggle-btn"
+            type="button"
             onClick={toggleTheme}
-            className="flex items-center justify-center w-8 h-8 rounded border border-border/80 bg-surface/60 text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="p-2 rounded-full border border-border bg-surface text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            aria-label="Toggle visual theme"
           >
-            {theme === 'dark' ? (
-              <Sun size={14} strokeWidth={1.5} />
-            ) : (
-              <Moon size={14} strokeWidth={1.5} />
-            )}
+            {theme === 'dark' ? <Sun size={14} strokeWidth={1.5} /> : <Moon size={14} strokeWidth={1.5} />}
           </button>
+
+          {/* Primary Pill Button */}
+          <Link
+            to="/jobs"
+            className="flex items-center justify-center rounded-full bg-btn-primary px-4 sm:px-5 py-1.5 font-sans text-13 font-medium text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm"
+          >
+            Browse Jobs
+          </Link>
         </div>
       </div>
     </header>

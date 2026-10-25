@@ -50,92 +50,91 @@ export const CompanyDirectoryModal: React.FC<CompanyDirectoryModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl bg-surface border border-border rounded-surface shadow-popover overflow-hidden flex flex-col max-h-[80vh]"
+        className="w-full max-w-2xl bg-surface border border-border rounded-2xl shadow-popover overflow-hidden flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border/80">
-          <div className="flex items-center gap-2">
-            <Building2 size={16} strokeWidth={1.5} className="text-accent" />
-            <h2 className="font-sans text-15 font-medium text-text">
-              Indexed Companies ({companiesList.length})
-            </h2>
+        <div className="flex items-center justify-between p-5 border-b border-border/80">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-accent-subdued text-accent">
+              <Building2 size={18} strokeWidth={1.5} />
+            </div>
+            <div>
+              <h2 className="font-sans text-16 font-semibold text-text">
+                Indexed Companies ({companiesList.length})
+              </h2>
+              <p className="font-sans text-12 text-text-muted">
+                Direct public ATS feeds crawled every 24 hours
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded text-text-muted hover:text-text hover:bg-surface-hover transition-colors"
+            className="p-1.5 rounded-full text-text-muted hover:text-text hover:bg-surface-subdued transition-colors"
           >
-            <X size={16} strokeWidth={1.5} />
+            <X size={18} strokeWidth={1.5} />
           </button>
         </div>
 
-        {/* Filter Input */}
-        <div className="p-3 border-b border-border/80 bg-surface/50">
-          <div className="flex items-center gap-2 rounded border border-border bg-bg px-3 py-1.5 focus-within:border-accent">
-            <Search size={14} strokeWidth={1.5} className="text-text-muted shrink-0" />
+        {/* Search Input Bar */}
+        <div className="p-4 border-b border-border/60 bg-surface-subdued/30">
+          <div className="relative flex items-center rounded-full border border-border bg-surface px-3.5 py-1.5 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent">
+            <Search size={15} strokeWidth={1.5} className="text-text-muted mr-2" />
             <input
               type="text"
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
-              placeholder="Filter companies or ATS type (e.g. OpenAI, Greenhouse)..."
+              placeholder="Search by employer name or ATS (Greenhouse, Lever, Ashby)..."
               className="w-full bg-transparent font-sans text-13 text-text placeholder:text-text-muted/60 focus:outline-none"
               autoFocus
             />
-            {filterQuery && (
-              <button
-                type="button"
-                onClick={() => setFilterQuery('')}
-                className="text-text-muted hover:text-text p-0.5"
-              >
-                <X size={12} strokeWidth={1.5} />
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Company List */}
-        <div className="overflow-y-auto divide-y divide-border/60 p-2">
+        {/* Scrollable Company List */}
+        <div className="flex-1 overflow-y-auto divide-y divide-border/60 p-2">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-text-muted text-13 font-mono">
-              No companies match "{filterQuery}"
+            <div className="p-8 text-center text-text-muted font-sans text-13">
+              No matching indexed employers found.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-              {filtered.map((comp) => (
-                <button
+            filtered.map((comp) => {
+              const monogram = comp.name.charAt(0).toUpperCase();
+              return (
+                <div
                   key={comp.slug}
-                  type="button"
                   onClick={() => handleSelectCompany(comp.name)}
-                  className="flex items-center justify-between p-2.5 rounded border border-transparent hover:border-border hover:bg-surface-hover text-left transition-colors group"
+                  className="flex items-center justify-between p-3.5 rounded-xl hover:bg-surface-subdued cursor-pointer transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="w-7 h-7 rounded border border-border/80 bg-bg flex items-center justify-center font-mono text-12 font-medium text-text shrink-0">
-                      {comp.name.charAt(0).toUpperCase()}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-sans text-13 font-medium text-text truncate group-hover:text-accent transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-xl bg-surface-subdued border border-border font-sans text-14 font-semibold text-text">
+                      {monogram}
+                    </div>
+                    <div>
+                      <h3 className="font-sans text-14 font-semibold text-text">
                         {comp.name}
-                      </p>
-                      <p className="font-mono text-11 text-text-muted uppercase">
-                        {comp.ats_type}
-                      </p>
+                      </h3>
+                      <span className="font-mono text-11 text-text-muted uppercase">
+                        via {comp.ats_type}
+                      </span>
                     </div>
                   </div>
 
-                  <span className="font-mono text-11 text-text-muted px-2 py-0.5 rounded bg-bg border border-border/60 shrink-0">
-                    {comp.jobs_count} roles
-                  </span>
-                </button>
-              ))}
-            </div>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-accent-subdued px-2.5 py-0.5 font-mono text-12 font-medium text-accent">
+                      {comp.jobs_count} open roles
+                    </span>
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
 
-        {/* Footer note */}
-        <div className="p-3 border-t border-border/80 bg-surface/30 flex items-center justify-between text-11 font-mono text-text-muted">
-          <span>Direct ATS ingestion · Zero third-party scrapers</span>
-          <span>Press ESC to close</span>
+        {/* Footer */}
+        <div className="p-4 border-t border-border/80 bg-surface-subdued/40 text-center font-sans text-12 text-text-muted">
+          Click any company to view all verified active openings
         </div>
       </div>
     </div>

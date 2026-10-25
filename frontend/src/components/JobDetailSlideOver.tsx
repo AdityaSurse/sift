@@ -59,7 +59,7 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
                 type="button"
                 onClick={onToggleSave}
                 disabled={isLoading || !job}
-                className={`p-1.5 rounded-control border border-border transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`p-2 rounded-full border border-border transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isSaved
                     ? 'bg-accent-subdued text-accent border-accent/40'
                     : 'bg-surface text-text-muted hover:text-text hover:border-border-strong'
@@ -72,7 +72,7 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-control border border-border bg-surface text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="p-2 rounded-full border border-border bg-surface text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 title="Close panel (Esc)"
               >
                 <X size={16} strokeWidth={1.5} />
@@ -105,22 +105,22 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
               <>
                 {/* Position Title & Employer */}
                 <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-control border border-border bg-surface font-mono text-16 font-medium text-text">
+                  <div className="flex items-center gap-3.5 mb-4">
+                    <div className="flex-shrink-0 flex items-center justify-center h-11 w-11 rounded-xl bg-btn-primary text-btn-primary-text font-sans text-16 font-bold select-none shadow-sm">
                       {monogram}
                     </div>
                     <div>
-                      <h2 className="font-sans text-20 font-medium text-text leading-tight">
+                      <h2 className="font-sans text-20 font-bold text-text leading-tight">
                         {job.title}
                       </h2>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="font-sans text-14 text-text-muted">{job.company_name}</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="font-sans text-14 text-text-muted font-medium">{job.company_name}</span>
                         {job.company_careers_url && (
                           <a
                             href={job.company_careers_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-mono text-12 text-accent hover:underline flex items-center gap-0.5"
+                            className="font-sans text-12 text-accent hover:underline flex items-center gap-0.5"
                           >
                             <span>Careers page</span>
                             <ExternalLink size={11} strokeWidth={1.5} />
@@ -130,41 +130,41 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
                     </div>
                   </div>
 
-                  {/* Metadata Tag Row */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2 font-mono text-12 text-text-muted">
+                  {/* Metadata Tag Row with Rounded-Full Pills */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 font-sans text-12 text-text-muted">
                     {job.location_raw && (
-                      <span className="flex items-center gap-1 rounded-control border border-border bg-surface px-2.5 py-1">
+                      <span className="flex items-center gap-1 rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium">
                         <MapPin size={12} strokeWidth={1.5} className="text-text-muted/70" />
                         <span>{job.location_raw}</span>
                       </span>
                     )}
 
                     {job.employment_type && (
-                      <span className="rounded-control border border-border bg-surface px-2.5 py-1 capitalize">
+                      <span className="rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium capitalize">
                         {job.employment_type.replace('_', ' ')}
                       </span>
                     )}
 
                     {job.duration_months && (
-                      <span className="rounded-control border border-border bg-surface px-2.5 py-1">
+                      <span className="rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium">
                         {job.duration_months} mo contract
                       </span>
                     )}
 
                     {job.remote_type && (
-                      <span className="rounded-control border border-border bg-surface px-2.5 py-1 capitalize">
+                      <span className="rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium capitalize">
                         {job.remote_type}
                       </span>
                     )}
 
                     {job.experience_level && (
-                      <span className="rounded-control border border-border bg-surface px-2.5 py-1 capitalize">
+                      <span className="rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium capitalize">
                         {job.experience_level}
                       </span>
                     )}
 
                     {job.role_category && (
-                      <span className="rounded-control border border-border bg-surface px-2.5 py-1">
+                      <span className="rounded-full border border-border bg-surface-subdued px-3 py-1 font-medium">
                         {job.role_category}
                       </span>
                     )}
@@ -174,14 +174,14 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
                 {/* Skills Section */}
                 {job.skills && job.skills.length > 0 && (
                   <div className="border-t border-border pt-5">
-                    <h4 className="font-mono text-12 text-text-muted uppercase tracking-wider mb-2.5">
+                    <h4 className="font-sans text-12 font-bold text-text uppercase tracking-wider mb-2.5">
                       Target Technologies & Skills
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
                       {job.skills.map((skill) => (
                         <span
                           key={skill}
-                          className="rounded-control border border-border bg-surface px-2.5 py-1 font-mono text-12 text-text"
+                          className="rounded-full border border-border bg-surface-subdued px-3 py-0.5 font-mono text-12 text-text font-medium"
                         >
                           {skill}
                         </span>
@@ -192,7 +192,7 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
 
                 {/* Cleaned Job Description */}
                 <div className="border-t border-border pt-5">
-                  <h4 className="font-mono text-12 text-text-muted uppercase tracking-wider mb-3">
+                  <h4 className="font-sans text-12 font-bold text-text uppercase tracking-wider mb-3">
                     Description
                   </h4>
                   <div className="font-sans text-14 text-text/90 leading-relaxed whitespace-pre-wrap space-y-4">
@@ -203,10 +203,10 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
             )}
           </div>
 
-          {/* Sticky Bottom Footer Apply Action */}
+          {/* Sticky Bottom Footer Apply Action with Caspian Slate Pill Button */}
           {job && (
             <div className="border-t border-border bg-surface px-6 py-4 flex items-center justify-between gap-4">
-              <span className="font-mono text-12 text-text-muted">
+              <span className="font-sans text-12 text-text-muted">
                 Direct ATS apply link
               </span>
 
@@ -214,10 +214,10 @@ export const JobDetailSlideOver: React.FC<JobDetailSlideOverProps> = ({
                 href={job.apply_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-control bg-accent px-5 py-2 font-sans text-14 font-medium text-white hover:bg-accent-hover transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="flex items-center gap-2 rounded-full bg-btn-primary px-6 py-2.5 font-sans text-13 font-semibold text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm"
               >
                 <span>Apply on Company Site</span>
-                <ExternalLink size={15} strokeWidth={1.5} />
+                <ExternalLink size={14} strokeWidth={2} />
               </a>
             </div>
           )}

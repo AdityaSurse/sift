@@ -1,108 +1,88 @@
-# Sift Design System & UI Specification
+# Sift Design System & Visual Specification
 
-> **Philosophy**: Editorial, calm, information-dense but airy.  
-> Sift draws aesthetic inspiration from Linear, Vercel Dashboard, and Are.na. It rejects typical SaaS landing-page bloat, saturated gradients, bouncy animations, and cartoonish illustrations. Every pixel exists to surface signal with quiet dignity.
-
----
-
-## 1. Visual Manifesto & Forbidden Patterns
-
-To maintain a calm, high-signal reading environment, the following are strictly prohibited:
-
-- ❌ **No gradients anywhere**: No background gradients, mesh gradients, text gradient clips, or glowing card borders.
-- ❌ **No glassmorphism**: No frosted glass, `backdrop-blur` stacks, or translucent glowing panels.
-- ❌ **No floating drop shadows**: Standard cards and rows use 1px hairline borders instead of shadows. Shadows are permitted **only** on floating popovers, dropdown menus, and command palettes (`0 4px 20px rgba(0, 0, 0, 0.15)`).
-- ❌ **No emoji as icons**: Every icon must be a Lucide SVG stroke icon (stroke width `1.5`, size `16px`).
-- ❌ **No multi-colored badge rainbows**: Tags are quiet, monochromatic chips. Only the single vermilion accent is permitted for active match highlights.
+> **Philosophy**: Modern, airy, editorial tech aesthetic. Inspired by Simplify’s clarity, high-contrast serif headlines, and rounded pill architecture, but intentionally shifted into Sift's original **Aegean Marine Teal & Deep Caspian Slate** identity. Built for speed, high-signal reading, zero dark patterns, and full accessibility.
 
 ---
 
-## 2. Color Tokens
+## 1. Palette Extraction & Color Architecture
 
-Sift uses warm neutrals with **exactly one accent**: warm vermilion (`#E5533D`). Vermilion is used with extreme restraint—reserved strictly for primary buttons, focus rings, and high-relevance match highlights.
-
-### Dark Theme (Default)
-| Token | Value | CSS Variable | Semantic Usage |
-| :--- | :--- | :--- | :--- |
-| **Background** | `#0B0B0C` | `--bg` | Application canvas, viewport base |
-| **Surface** | `#131314` | `--surface` | Job rows, filter rail, card containers, dialogs |
-| **Border** | `rgba(255, 255, 255, 0.08)` | `--border` | Hairline dividers, 1px container boundaries |
-| **Border Strong** | `rgba(255, 255, 255, 0.16)` | `--border-strong` | Active inputs, focused elements, hover boundaries |
-| **Text Primary** | `#EDEDEA` | `--text` | Headlines, job titles, primary data |
-| **Text Muted** | `#8A8A85` | `--text-muted` | Company name, location, dates, metadata |
-| **Accent (Vermilion)**| `#E5533D` | `--accent` | Primary action button, active focus ring, match pill |
-| **Accent Hover** | `#D4432E` | `--accent-hover` | Hover state for accent buttons |
-| **Accent Subdued** | `rgba(229, 83, 61, 0.12)` | `--accent-subdued`| Active filter background, match highlight container |
-
-### Light Theme
-| Token | Value | CSS Variable | Semantic Usage |
-| :--- | :--- | :--- | :--- |
-| **Background** | `#FAFAF8` | `--bg` | Warm off-white newsprint page canvas |
-| **Surface** | `#FFFFFF` | `--surface` | Pure white job cards, filter sheets, command bar |
-| **Border** | `rgba(0, 0, 0, 0.08)` | `--border` | Subtle hairline structure |
-| **Border Strong** | `rgba(0, 0, 0, 0.18)` | `--border-strong` | Input outlines, active element boundary |
-| **Text Primary** | `#141414` | `--text` | High-contrast black ink for titles and primary labels |
-| **Text Muted** | `#6E6E6A` | `--text-muted` | Secondary details, metadata, subheaders |
-| **Accent (Vermilion)**| `#E5533D` | `--accent` | Primary action button, focus rings |
-| **Accent Hover** | `#CE432F` | `--accent-hover` | Accent action hover |
-| **Accent Subdued** | `rgba(229, 83, 61, 0.08)` | `--accent-subdued`| Subtle warm vermilion wash for active match chips |
+### Reference Sampling & Sift Hue Shift
+| Token Name | Reference Concept | Sift Original Shift (Light) | Sift Original Shift (Dark) | Semantic Usage |
+| :--- | :--- | :--- | :--- | :--- |
+| **Page Background (`--bg`)** | Off-white canvas / Deep dark | `#FAFBFC` (porcelain canvas) | `#080C10` (obsidian midnight) | Base viewport, page canvas |
+| **Surface (`--surface`)** | Crisp white card / Slate panel | `#FFFFFF` (elevated white) | `#0E141D` (midnight surface) | Cards, detail pane, modals |
+| **Surface Subdued (`--surface-subdued`)** | Soft inset gray | `#F1F5F8` (soft cool wash) | `#141C26` (elevated inset) | Secondary wells, code blocks, row hovers |
+| **Border (`--border`)** | Hairline slate border | `rgba(15, 23, 42, 0.08)` (`#E2E7ED`) | `rgba(255, 255, 255, 0.08)` (`#1E2735`)| Crisp 1px boundaries, card edges |
+| **Border Strong (`--border-strong`)** | Active input outline | `#CBD5E1` | `#2E3A4B` | Focused inputs, hover borders |
+| **Text Primary (`--text`)** | Deep rich ink / Crisp white | `#0A0E14` (dense ink black) | `#F8FAFC` (high-contrast silver) | Headlines, primary labels, titles |
+| **Text Muted (`--text-muted`)** | Cool slate gray | `#536474` (oceanic slate) | `#94A3B8` (cool zinc) | Subtitles, company name, timestamps |
+| **Primary Accent (`--accent`)** | Bright cyan spark | `#0A7D87` (Aegean marine teal) | `#18C5D2` (vivid marine cyan) | Brand highlights, active toggles, icons |
+| **Accent Hover (`--accent-hover`)** | Darker cyan | `#08666E` | `#14B3BF` | Interactive hover states |
+| **Accent Subdued (`--accent-subdued`)** | Cyan wash | `rgba(10, 125, 135, 0.08)` | `rgba(24, 197, 210, 0.12)` | Active filter chips, match badge pills |
+| **Primary Pill Button (`--btn-primary`)** | Deep slate pill button | `#0A262E` (deep Caspian slate) | `#14B8A6` (vivid marine teal) | Main CTA buttons ("Search", "Apply") |
+| **Primary Button Text (`--btn-primary-text`)** | Contrast text | `#FFFFFF` | `#04151A` | Text inside primary pill button |
+| **Success / Live (`--success`)** | Emerald status | `#059669` / `#ECFDF5` | `#34D399` / `rgba(52, 211, 153, 0.1)` | 24h fresh badge, live crawl indicators |
+| **Warning (`--warning`)** | Amber | `#D97706` / `#FFFBEB` | `#FBBF24` / `rgba(251, 191, 36, 0.1)` | Expiring positions, warnings |
+| **Error (`--error`)** | Rose red | `#E11D48` / `#FFF1F2` | `#FB7185` / `rgba(251, 113, 133, 0.1)` | Failed crawls, validation errors |
 
 ---
 
-## 3. Typography
+## 2. Typography
 
-Typography creates the visual hierarchy. We use three deliberate font families:
-
-1. **Geist Sans**: Primary interface font for all navigation, titles, job names, descriptions, and body copy.
-2. **Geist Mono**: Dedicated metadata font for location, salary ranges, duration, timestamps, and ATS provenance.
-3. **Instrument Serif**: Reserved **strictly** for the main editorial landing headline (never in body or UI components).
-
-### Typographic Scale
-| Token | Font Family | Size | Weight | Line Height | Tracking | Usage |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `text-display` | Instrument Serif | 56px (`3.5rem`) | 400 | 1.1 | `-0.025em` | Hero editorial headline |
-| `text-title-lg`| Geist Sans | 32px (`2.0rem`) | 500 | 1.2 | `-0.02em` | Section headings, job detail title |
-| `text-title-sm`| Geist Sans | 20px (`1.25rem`)| 500 | 1.35 | `-0.015em`| Job row title, modal headers |
-| `text-body` | Geist Sans | 16px (`1.0rem`) | 400 | 1.55 | `0` | Primary reading text, summaries |
-| `text-body-sm` | Geist Sans | 14px (`0.875rem`)| 400 | 1.5 | `0` | Filter labels, input text |
-| `text-meta` | Geist Mono | 13px (`0.8125rem`)| 400 / 500 | 1.4 | `+0.01em` | Metadata, tags, salary, location |
-| `text-caption` | Geist Mono | 12px (`0.75rem`)| 400 | 1.4 | `+0.02em` | Timestamps, ATS source label |
+1. **Display Headline (`font-serif`)**: [Instrument Serif](https://fonts.google.com/specimen/Instrument+Serif).
+   - High-contrast, sharp editorial serif used exclusively for hero display headlines.
+   - Sizing: `text-44` to `text-64` with tracking `-0.025em` and `font-normal`.
+2. **Interface Sans (`font-sans`)**: [Geist Sans](https://vercel.com/font) / Clean Modern Sans (`-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif`).
+   - Sizing: `13px` (sub-labels), `14px` (body copy, inputs), `15px` (titles, subheads), `16px` (hero text), `18px`-`20px` (card titles).
+3. **Metadata Mono (`font-mono`)**: [Geist Mono](https://vercel.com/font) (`SF Mono, monospace`).
+   - Sizing: `11px`-`12px` with letter-spacing `+0.01em` for timestamps, ATS provenance badges, salary bounds, and counts.
 
 ---
 
-## 4. Spacing, Borders & Shadows
+## 3. Border Radii & Elevation
 
-- **Base Unit**: `4px` grid with an `8pt` rhythmic cadence (`4px`, `8px`, `12px`, `16px`, `24px`, `32px`, `48px`, `64px`).
-- **Border Radius**:
-  - `radius-surface`: `10px` for cards, dialog sheets, search containers, and popovers.
-  - `radius-control`: `6px` for inputs, buttons, filter chips, and badges.
-- **Hairline Borders**:
-  - All cards, headers, sidebars, and rows use a crisp `1px solid var(--border)` instead of floating drop-shadows.
-- **Shadows**:
-  - Only allowed on floating menus and popovers: `0 4px 20px rgba(0, 0, 0, 0.15)` (dark) / `0 4px 20px rgba(0, 0, 0, 0.08)` (light).
-
----
-
-## 5. Icons & Motion
-
-- **Icon Library**: [Lucide](https://lucide.dev/).
-- **Stroke Width**: `1.5px` strict.
-- **Icon Size**: `16px` standard (occasional `14px` for tight inline metadata).
-- **Motion Spec**:
-  - Duration: `150ms`.
-  - Timing function: `cubic-bezier(0.16, 1, 0.3, 1)` or `ease-out`.
-  - Properties permitted to animate: `opacity` and `transform` (subtle `translateY` of 2-4px max).
-  - Respects `@media (prefers-reduced-motion: reduce)`: all transitions collapse to instantaneous.
+- **Pill Controls (`rounded-full`)**:
+  - Primary hero buttons, search action buttons, filter pills, monogram circular accents.
+- **Large Showcase Surfaces (`rounded-2xl` = `16px`)**:
+  - Hero search capsule, "How it works" interactive product mockups, modal containers.
+- **Standard Cards & Panes (`rounded-xl` = `12px`)**:
+  - Category tiles, dense job list containers, right-side `JobDetailPane`.
+- **Badges & Chips (`rounded-full` or `rounded-lg` = `8px`)**:
+  - Filter chips, skill badges, match rationale pills.
+- **Shadow System**:
+  - Light mode: Soft diffused ambient shadows:
+    - Card: `0 2px 8px -2px rgba(10, 25, 35, 0.05), 0 1px 3px rgba(10, 25, 35, 0.03)`
+    - Floating / Popover: `0 12px 36px -6px rgba(10, 25, 35, 0.12), 0 4px 12px -2px rgba(10, 25, 35, 0.05)`
+  - Dark mode: Crisp 1px hairline border with subtle midnight depth:
+    - Popover: `0 16px 40px -8px rgba(0, 0, 0, 0.65)`
 
 ---
 
-## 6. Core Component Catalog (To Be Implemented)
+## 4. Component Styles
 
-1. **`SearchBar`**: Centered, expansive command input with vermilion focus ring and `⌘K` shortcut trigger.
-2. **`FilterRail`**: Sticky, quiet left sidebar with grouped chips (Role, Experience, Remote, Tech Stack, Compensation).
-3. **`JobRow`**: Information-dense horizontal listing with company, title, location, salary badge, ATS source tag, and direct apply link.
-4. **`Chip`**: Interactive toggle button with `6px` radius, hairline border, and subtle vermilion fill when selected.
-5. **`Badge`**: Non-interactive metadata indicator (e.g., `Remote`, `Greenhouse`, `>$180k`).
-6. **`Skeleton`**: Subtle pulsing placeholder using `--surface` and hairline border.
-7. **`EmptyState`**: Understated editorial message with helpful query suggestions.
-8. **`CommandPalette`**: Quick keyboard-driven navigator overlay (`⌘K`).
+### Buttons
+- **Primary Pill**: `rounded-full bg-[var(--btn-primary)] text-[var(--btn-primary-text)] px-6 py-2.5 font-sans text-14 font-medium transition-all hover:opacity-90 active:scale-[0.98] shadow-sm`
+- **Secondary**: `rounded-full border border-border bg-surface text-text hover:bg-surface-subdued px-5 py-2 font-sans text-13 font-medium transition-colors`
+- **Ghost**: `rounded-full text-text-muted hover:text-text hover:bg-surface-subdued px-3.5 py-1.5 font-sans text-13 transition-colors`
+
+### Inputs
+- **Hero Search Capsule**: `rounded-full border border-border/80 bg-surface shadow-card focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all p-1.5 flex items-center`
+- **Standard Input**: `rounded-xl border border-border bg-surface px-3.5 py-2 text-14 text-text placeholder:text-text-muted/50 focus:border-accent focus:ring-1 focus:ring-accent outline-none`
+
+### Chips & Badges
+- **Active Filter Pill**: `rounded-full border border-accent/40 bg-accent-subdued text-accent px-3 py-1 font-sans text-12 font-medium`
+- **Inactive Filter Pill**: `rounded-full border border-border bg-surface text-text-muted hover:border-border-strong hover:text-text px-3 py-1 font-sans text-12 transition-colors`
+- **Skill Chip**: `rounded-full border border-border/70 bg-surface-subdued px-2.5 py-0.5 font-mono text-11 text-text-muted`
+
+### Two-Pane Master-Detail Layout (`/jobs`)
+- **Top Sticky Bar**: Persistent search bar + quick category filter pills + total live counts.
+- **Left Column**: Dense job rows (`rounded-xl` container with subtle dividers). Monogram pill, bold position title, company name, mono location & duration, skill tags, relative posted time, and bookmark toggle.
+- **Right Column (Sticky)**: `JobDetailPane` displaying company header, verified direct ATS badge, full skills list, formatted job description, and full-width Caspian/Marine primary Apply button.
+
+---
+
+## 5. Motion Specification
+
+- **Duration**: `150ms`-`200ms`.
+- **Easing**: `cubic-bezier(0.16, 1, 0.3, 1)`.
+- **Reduced Motion**: Full support via `@media (prefers-reduced-motion: reduce)` which collapses animations to instantaneous.

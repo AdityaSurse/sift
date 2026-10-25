@@ -30,7 +30,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       category: 'Query Suggestion',
       icon: <Search size={14} strokeWidth={1.5} />,
       action: () => {
-        navigate('/search?q=6+month+embedded+software+internship+in+Bangalore,+fresher');
+        navigate('/jobs?q=6+month+embedded+software+internship+in+Bangalore,+fresher');
         onClose();
       },
     },
@@ -40,7 +40,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       category: 'Query Suggestion',
       icon: <Search size={14} strokeWidth={1.5} />,
       action: () => {
-        navigate('/search?q=Senior+React+frontend+engineer+in+London,+remote');
+        navigate('/jobs?q=Senior+React+frontend+engineer+in+London,+remote');
         onClose();
       },
     },
@@ -50,7 +50,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       category: 'Query Suggestion',
       icon: <Search size={14} strokeWidth={1.5} />,
       action: () => {
-        navigate('/search?q=Full+time+machine+learning+engineer+in+San+Francisco');
+        navigate('/jobs?q=Full+time+machine+learning+engineer+in+San+Francisco');
         onClose();
       },
     },
@@ -60,23 +60,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       category: 'Query Suggestion',
       icon: <Search size={14} strokeWidth={1.5} />,
       action: () => {
-        navigate('/search?q=Staff+DevOps+engineer+remote+USA');
+        navigate('/jobs?q=Staff+DevOps+engineer+remote+USA');
         onClose();
       },
     },
     {
-      id: 'nav-search',
-      title: 'Browse all open positions',
+      id: 'nav-jobs',
+      title: 'Explore All Openings (/jobs)',
       category: 'Navigation',
       icon: <Terminal size={14} strokeWidth={1.5} />,
       action: () => {
-        navigate('/search');
+        navigate('/jobs');
         onClose();
       },
     },
     {
       id: 'nav-saved',
-      title: 'View saved positions',
+      title: 'View Saved Jobs',
       category: 'Navigation',
       icon: <Bookmark size={14} strokeWidth={1.5} />,
       action: () => {
@@ -85,8 +85,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       },
     },
     {
-      id: 'toggle-theme',
-      title: theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme',
+      id: 'theme-toggle',
+      title: `Toggle Theme (${theme === 'dark' ? 'Light Mode' : 'Dark Mode'})`,
       category: 'Appearance',
       icon: theme === 'dark' ? <Sun size={14} strokeWidth={1.5} /> : <Moon size={14} strokeWidth={1.5} />,
       action: () => {
@@ -96,33 +96,37 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     },
   ];
 
-  // Filter commands by search term
-  const filtered = commands.filter((c) =>
-    c.title.toLowerCase().includes(search.toLowerCase()) ||
-    c.category.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter commands by search string
+  const filtered = search.trim()
+    ? commands.filter(
+        (c) =>
+          c.title.toLowerCase().includes(search.toLowerCase()) ||
+          c.category.toLowerCase().includes(search.toLowerCase())
+      )
+    : commands;
 
-  // Keyboard navigation inside command palette
+  // Keyboard navigation within palette
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        onClose();
-      } else if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown') {
         e.preventDefault();
         setSelectedIndex((prev) => (prev + 1) % (filtered.length || 1));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + filtered.length) % (filtered.length || 1));
+        setSelectedIndex((prev) => (prev - 1 + (filtered.length || 1)) % (filtered.length || 1));
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (filtered[selectedIndex]) {
           filtered[selectedIndex].action();
         } else if (search.trim()) {
-          navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+          navigate(`/jobs?q=${encodeURIComponent(search.trim())}`);
           onClose();
         }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
       }
     };
 
@@ -140,12 +144,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         className="fixed inset-0 bg-black/60 transition-opacity duration-150 ease-editorial"
       />
 
-      {/* Floating Dialog Container: 1px hairline border + allowable popover shadow */}
+      {/* Floating Dialog Container: rounded-2xl + shadow-popover */}
       <div className="fixed inset-0 flex items-start justify-center pt-20 sm:pt-28 px-4">
-        <div className="w-full max-w-xl rounded-surface border border-border bg-surface text-text shadow-popover overflow-hidden transition-all duration-150 ease-editorial">
+        <div className="w-full max-w-xl rounded-2xl border border-border bg-surface text-text shadow-popover overflow-hidden transition-all duration-150 ease-editorial">
           {/* Search Input Bar */}
           <div className="flex items-center px-4 py-3.5 border-b border-border gap-3">
-            <Search size={16} strokeWidth={1.5} className="text-text-muted flex-shrink-0" />
+            <Search size={16} strokeWidth={1.5} className="text-accent flex-shrink-0" />
             <input
               type="text"
               autoFocus
@@ -157,7 +161,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
               placeholder="Search positions, suggestions, or commands..."
               className="w-full bg-transparent font-sans text-14 text-text placeholder:text-text-muted/60 focus:outline-none"
             />
-            <kbd className="hidden sm:inline rounded border border-border px-1.5 py-0.5 font-mono text-12 text-text-muted">
+            <kbd className="hidden sm:inline rounded-full border border-border px-2 py-0.5 font-mono text-11 text-text-muted">
               ESC
             </kbd>
           </div>
@@ -167,7 +171,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
             {filtered.length === 0 ? (
               <div className="p-4 text-center">
                 <p className="font-sans text-13 text-text-muted">
-                  No matching command. Press <span className="text-text font-mono">Enter</span> to search for "{search}".
+                  No matching command. Press <span className="text-text font-mono font-medium">Enter</span> to search for "{search}".
                 </p>
               </div>
             ) : (
@@ -179,8 +183,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                     type="button"
                     onClick={item.action}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`flex items-center justify-between w-full px-3 py-2 rounded-control text-left transition-colors duration-150 ease-editorial font-sans text-13 ${
-                      isSelected ? 'bg-bg text-accent font-medium' : 'text-text hover:bg-bg/60'
+                    className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-left transition-colors duration-150 ease-editorial font-sans text-13 ${
+                      isSelected ? 'bg-surface-subdued text-accent font-medium' : 'text-text hover:bg-surface-subdued/60'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
@@ -189,7 +193,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       </span>
                       <span className="truncate">{item.title}</span>
                     </div>
-                    <span className="font-mono text-12 text-text-muted/70 flex-shrink-0 ml-2">
+                    <span className="font-sans text-11 text-text-muted flex-shrink-0 ml-2">
                       {item.category}
                     </span>
                   </button>
@@ -202,3 +206,5 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
     </div>
   );
 };
+
+export default CommandPalette;

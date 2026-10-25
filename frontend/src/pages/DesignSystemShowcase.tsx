@@ -256,13 +256,17 @@ export const DesignSystemShowcase: React.FC = () => {
                   <span className="font-mono text-12">surface</span>
                   <span className="font-mono text-12 text-text-muted">var(--surface)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control bg-accent text-white">
-                  <span className="font-mono text-12">accent (vermilion)</span>
-                  <span className="font-mono text-12">#E5533D</span>
+                <div className="flex items-center justify-between p-2 rounded-control bg-accent text-white font-medium">
+                  <span className="font-mono text-12">accent (Aegean Teal)</span>
+                  <span className="font-mono text-12">var(--accent)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control bg-accent-subdued border border-accent/30 text-text">
+                <div className="flex items-center justify-between p-2 rounded-control bg-btn-primary text-btn-primary-text font-medium">
+                  <span className="font-mono text-12">btn-primary (Caspian Slate)</span>
+                  <span className="font-mono text-12">var(--btn-primary)</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded-control bg-accent-subdued border border-accent/30 text-accent font-medium">
                   <span className="font-mono text-12">accent-subdued</span>
-                  <span className="font-mono text-12 text-accent">tint wash</span>
+                  <span className="font-mono text-12">tint wash</span>
                 </div>
               </div>
             </div>

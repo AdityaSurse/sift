@@ -22,7 +22,7 @@ import type { SearchItem, SearchParams } from '../lib/api';
 /**
  * Sift Two-Pane Jobs Browser (/jobs)
  * Why: Implements a high-density, keyboard-driven two-pane master-detail layout
- * modeled on the structure of Simplify's job browser, but using Sift's original editorial aesthetic.
+ * modeled on Simplify's job browser with Aegean Marine Teal and Caspian Slate design language.
  */
 export const JobsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -98,8 +98,8 @@ export const JobsPage: React.FC = () => {
 
   // Keyboard navigation: j (down), k (up), Enter (open direct apply link in new tab)
   useEffect(() => {
-    const items = data?.items || [];
-    if (items.length === 0) return;
+    const jobList = data?.items || [];
+    if (jobList.length === 0) return;
 
     const handleKeyDown = (e: KeyboardEvent): void => {
       const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
@@ -110,20 +110,20 @@ export const JobsPage: React.FC = () => {
       if (e.key === 'j' || e.key === 'ArrowDown') {
         e.preventDefault();
         setActiveRowIndex((prev) => {
-          const next = Math.min(prev + 1, items.length - 1);
-          setSelectedJobId(items[next].job_id);
+          const next = Math.min(prev + 1, jobList.length - 1);
+          setSelectedJobId(jobList[next].job_id);
           return next;
         });
       } else if (e.key === 'k' || e.key === 'ArrowUp') {
         e.preventDefault();
         setActiveRowIndex((prev) => {
           const next = Math.max(prev - 1, 0);
-          setSelectedJobId(items[next].job_id);
+          setSelectedJobId(jobList[next].job_id);
           return next;
         });
-      } else if (e.key === 'Enter' && activeRowIndex >= 0 && activeRowIndex < items.length) {
+      } else if (e.key === 'Enter' && activeRowIndex >= 0 && activeRowIndex < jobList.length) {
         e.preventDefault();
-        window.open(items[activeRowIndex].apply_url, '_blank', 'noopener,noreferrer');
+        window.open(jobList[activeRowIndex].apply_url, '_blank', 'noopener,noreferrer');
       }
     };
 
@@ -137,11 +137,11 @@ export const JobsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg text-text transition-colors duration-150 ease-editorial flex flex-col">
       {/* Sticky Top Search & Filter Bar */}
-      <div className="sticky top-0 z-30 bg-bg border-b border-border/80 px-4 sm:px-6 py-3">
+      <div className="sticky top-0 z-30 bg-bg/95 border-b border-border/80 px-4 sm:px-8 py-3">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Natural Language Search Input */}
+          {/* Natural Language Search Capsule */}
           <form onSubmit={handleSearchSubmit} className="flex-1 max-w-2xl relative">
-            <div className="relative flex items-center rounded-control border border-border/80 bg-surface focus-within:border-accent focus-within:ring-1 focus-within:ring-accent transition-colors">
+            <div className="relative flex items-center rounded-full border border-border/80 bg-surface shadow-card px-2 py-1 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all">
               <div className="pl-3 pr-2 text-text-muted">
                 <Search size={16} strokeWidth={1.5} />
               </div>
@@ -150,36 +150,36 @@ export const JobsPage: React.FC = () => {
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
                 placeholder="Search natural language, title, stack, or location..."
-                className="w-full bg-transparent py-2 px-1 font-sans text-13 sm:text-14 text-text placeholder:text-text-muted/50 focus:outline-none"
+                className="w-full bg-transparent py-1.5 px-1 font-sans text-13 sm:text-14 text-text placeholder:text-text-muted/50 focus:outline-none"
               />
               {inputQuery && (
                 <button
                   type="button"
                   onClick={handleClearQuery}
-                  className="pr-2 text-text-muted hover:text-text"
+                  className="p-1 mr-1 text-text-muted hover:text-text rounded-full"
                   title="Clear query"
                 >
-                  <X size={14} strokeWidth={1.5} />
+                  <X size={14} strokeWidth={2} />
                 </button>
               )}
               <button
                 type="submit"
-                className="mr-1.5 rounded bg-accent px-3 py-1 font-sans text-12 font-medium text-white hover:bg-accent-hover transition-colors"
+                className="rounded-full bg-btn-primary px-4 py-1.5 font-sans text-12 font-semibold text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm"
               >
                 Search
               </button>
             </div>
           </form>
 
-          {/* Quick Filter Chips & Action Controls */}
+          {/* Quick Filter Chips & Mobile Action Controls */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
             {/* Remote Quick Filter */}
             <button
               type="button"
               onClick={() => updateParams({ remote: params.remote === 'remote' ? undefined : 'remote', page: 1 })}
-              className={`rounded-control border px-3 py-1 font-mono text-12 transition-colors whitespace-nowrap ${
+              className={`rounded-full border px-3.5 py-1.5 font-sans text-12 font-medium transition-all whitespace-nowrap ${
                 params.remote === 'remote'
-                  ? 'border-accent/40 bg-accent-subdued text-accent'
+                  ? 'border-accent/40 bg-accent-subdued text-accent shadow-xs'
                   : 'border-border/80 bg-surface text-text-muted hover:text-text hover:border-border-strong'
               }`}
             >
@@ -190,9 +190,9 @@ export const JobsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => updateParams({ type: params.type === 'internship' ? undefined : 'internship', page: 1 })}
-              className={`rounded-control border px-3 py-1 font-mono text-12 transition-colors whitespace-nowrap ${
+              className={`rounded-full border px-3.5 py-1.5 font-sans text-12 font-medium transition-all whitespace-nowrap ${
                 params.type === 'internship'
-                  ? 'border-accent/40 bg-accent-subdued text-accent'
+                  ? 'border-accent/40 bg-accent-subdued text-accent shadow-xs'
                   : 'border-border/80 bg-surface text-text-muted hover:text-text hover:border-border-strong'
               }`}
             >
@@ -203,9 +203,9 @@ export const JobsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => updateParams({ type: params.type === 'full_time' ? undefined : 'full_time', page: 1 })}
-              className={`rounded-control border px-3 py-1 font-mono text-12 transition-colors whitespace-nowrap ${
+              className={`rounded-full border px-3.5 py-1.5 font-sans text-12 font-medium transition-all whitespace-nowrap ${
                 params.type === 'full_time'
-                  ? 'border-accent/40 bg-accent-subdued text-accent'
+                  ? 'border-accent/40 bg-accent-subdued text-accent shadow-xs'
                   : 'border-border/80 bg-surface text-text-muted hover:text-text hover:border-border-strong'
               }`}
             >
@@ -216,7 +216,7 @@ export const JobsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileFiltersOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 rounded-control border border-border/80 bg-surface px-3 py-1 font-sans text-12 text-text hover:border-border-strong transition-colors"
+              className="lg:hidden flex items-center gap-1.5 rounded-full border border-border/80 bg-surface px-3.5 py-1.5 font-sans text-12 font-medium text-text hover:border-border-strong transition-colors"
             >
               <SlidersHorizontal size={13} strokeWidth={1.5} />
               <span>Filters</span>
@@ -231,74 +231,60 @@ export const JobsPage: React.FC = () => {
       </div>
 
       {/* Main Two-Pane Workplace Layout */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex items-start gap-6">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 flex items-start gap-6 sm:gap-8">
         {/* Left Filter Rail on Desktop */}
-        <div className="hidden lg:block w-64 flex-shrink-0 sticky top-20">
-          <FilterRail
-            params={params}
-            onChange={updateParams}
-            onReset={handleResetFilters}
-            options={filterOptions}
-            isOpenMobile={isMobileFiltersOpen}
-            onCloseMobile={() => setIsMobileFiltersOpen(false)}
-          />
-        </div>
-
-        {/* Mobile Filter Sheet Drawer */}
-        <div className="lg:hidden">
-          <FilterRail
-            params={params}
-            onChange={updateParams}
-            onReset={handleResetFilters}
-            options={filterOptions}
-            isOpenMobile={isMobileFiltersOpen}
-            onCloseMobile={() => setIsMobileFiltersOpen(false)}
-          />
-        </div>
+        <FilterRail
+          params={params}
+          onChange={updateParams}
+          onReset={handleResetFilters}
+          options={filterOptions}
+          isOpenMobile={isMobileFiltersOpen}
+          onCloseMobile={() => setIsMobileFiltersOpen(false)}
+        />
 
         {/* Center / Left Pane: Dense Job List */}
         <div className="flex-1 min-w-0 flex flex-col">
           {/* Metadata & Total Count Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-border/80 mb-2">
-            <div className="flex items-center gap-2 flex-wrap min-w-0">
-              <span className="font-mono text-13 font-medium text-text">
-                {isLoading ? 'Scanning index...' : `${data?.total.toLocaleString() ?? 0} positions available`}
+          <div className="flex items-center justify-between pb-3 border-b border-border/80 mb-3">
+            <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+              <span className="font-sans text-14 font-semibold text-text">
+                {isLoading ? 'Scanning index...' : `${data?.total.toLocaleString() ?? 0} positions found`}
               </span>
 
               {params.q && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent-subdued px-2.5 py-0.5 font-mono text-11 text-accent">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-subdued px-3 py-0.5 font-sans text-12 text-accent font-medium">
                   <span className="truncate max-w-[160px]">{params.q}</span>
                   <button type="button" onClick={handleClearQuery} className="hover:text-text">
-                    <X size={11} strokeWidth={2} />
+                    <X size={12} strokeWidth={2} />
                   </button>
                 </span>
               )}
             </div>
 
-            <span className="hidden xl:inline font-mono text-11 text-text-muted/60 select-none">
+            <span className="hidden xl:inline font-mono text-11 text-text-muted select-none">
               <kbd className="rounded border border-border px-1">j</kbd> / <kbd className="rounded border border-border px-1">k</kbd> navigate · <kbd className="rounded border border-border px-1">Enter</kbd> apply
             </span>
           </div>
 
           {/* Error State */}
           {isError && (
-            <div className="p-8 text-center border border-border rounded-surface bg-surface/50 my-4 space-y-2">
-              <p className="font-sans text-14 font-medium text-text">Could not load positions</p>
+            <div className="p-8 text-center border border-border rounded-2xl bg-surface my-4 space-y-2 shadow-card">
+              <p className="font-sans text-15 font-semibold text-text">Could not load positions</p>
               <p className="font-mono text-12 text-text-muted">{error?.message || 'Server error'}</p>
               <button
                 type="button"
                 onClick={() => refetch()}
-                className="inline-flex items-center gap-1.5 rounded bg-accent px-3 py-1.5 font-sans text-12 font-medium text-white hover:bg-accent-hover transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-full bg-btn-primary px-4 py-2 font-sans text-12 font-semibold text-btn-primary-text hover:bg-btn-primary-hover transition-colors mt-2"
               >
                 <RotateCcw size={13} strokeWidth={1.5} />
-                <span>Retry</span>
+                <span>Retry Search</span>
               </button>
             </div>
           )}
 
           {/* Loading Skeletons */}
           {isLoading && (
-            <div className="border border-border/80 rounded-surface overflow-hidden divide-y divide-border/60">
+            <div className="border border-border/80 rounded-2xl overflow-hidden divide-y divide-border/60 bg-surface shadow-card">
               <SkeletonRow />
               <SkeletonRow />
               <SkeletonRow />
@@ -322,7 +308,7 @@ export const JobsPage: React.FC = () => {
 
           {/* Dense Job Rows */}
           {!isLoading && !isError && data && data.items.length > 0 && (
-            <div className="border border-border/80 rounded-surface overflow-hidden divide-y divide-border/60 bg-bg">
+            <div className="border border-border/80 rounded-2xl overflow-hidden divide-y divide-border/60 bg-surface shadow-card">
               {data.items.map((job, idx) => (
                 <JobRow
                   key={job.job_id}
@@ -345,12 +331,12 @@ export const JobsPage: React.FC = () => {
 
           {/* Pagination Controls */}
           {!isLoading && data && data.total_pages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-border/80 mt-4">
+            <div className="flex items-center justify-between pt-5 border-t border-border/80 mt-5">
               <button
                 type="button"
                 disabled={params.page! <= 1}
                 onClick={() => updateParams({ page: Math.max(1, (params.page || 1) - 1) })}
-                className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 font-sans text-12 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
+                className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-12 font-medium text-text disabled:opacity-30 disabled:pointer-events-none hover:bg-surface-subdued transition-colors shadow-xs"
               >
                 <ChevronLeft size={13} strokeWidth={1.5} />
                 <span>Previous</span>
@@ -364,7 +350,7 @@ export const JobsPage: React.FC = () => {
                 type="button"
                 disabled={params.page! >= data.total_pages}
                 onClick={() => updateParams({ page: (params.page || 1) + 1 })}
-                className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 font-sans text-12 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
+                className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-12 font-medium text-text disabled:opacity-30 disabled:pointer-events-none hover:bg-surface-subdued transition-colors shadow-xs"
               >
                 <span>Next</span>
                 <ChevronRight size={13} strokeWidth={1.5} />
@@ -374,7 +360,7 @@ export const JobsPage: React.FC = () => {
         </div>
 
         {/* Right Pane on Desktop: Sticky Job Detail Pane (Two-Pane Layout) */}
-        <aside className="hidden lg:block w-[420px] xl:w-[480px] flex-shrink-0 sticky top-20 h-[calc(100vh-6.5rem)]">
+        <aside className="hidden lg:block w-[440px] xl:w-[500px] flex-shrink-0 sticky top-20 h-[calc(100vh-6.5rem)]">
           <JobDetailPane
             jobId={effectiveJobId}
             isSaved={effectiveJobId ? isSaved(effectiveJobId) : false}

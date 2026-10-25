@@ -7,32 +7,31 @@ interface AnnouncementBarProps {
 }
 
 /**
- * Slim top announcement bar displaying verified 24-hour additions.
- * Why: Establishes freshness signal immediately without loud promotional banners.
+ * Slim top announcement bar showing live 24h crawled roles count.
+ * Why: Establishes freshness with a live database-backed count and Aegean accent.
  */
-export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({ rolesAdded24h = 0 }) => {
+export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({ rolesAdded24h }) => {
   return (
-    <div className="w-full border-b border-border/80 bg-surface/50 text-text px-4 py-1.5 text-center text-12 font-sans transition-colors">
-      <div className="max-w-6xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-        <span className="inline-flex items-center gap-1.5 font-mono text-11 text-text-muted">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="font-medium text-text">
-            {rolesAdded24h > 0 ? rolesAdded24h.toLocaleString() : '9,600+'}
-          </span>{' '}
-          verified roles added in the last 24 hours
+    <div className="w-full border-b border-border/60 bg-surface-subdued text-text px-4 py-2 transition-colors duration-150 ease-editorial">
+      <div className="mx-auto flex max-w-7xl items-center justify-center gap-2.5 font-sans text-12 text-center">
+        <span className="flex h-2 w-2 relative flex-shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
 
-        <span className="text-border-strong hidden sm:inline">·</span>
+        <span className="text-text-muted">
+          <strong className="font-semibold text-text">
+            {rolesAdded24h ? rolesAdded24h.toLocaleString() : 'Fresh'}
+          </strong>{' '}
+          verified roles indexed directly from company ATS feeds in the last 24 hours.
+        </span>
 
         <Link
           to="/jobs"
-          className="inline-flex items-center gap-1 font-mono text-11 text-accent hover:text-accent-hover font-medium underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-accent hover:underline flex-shrink-0"
         >
-          <span>Explore fresh openings</span>
-          <ArrowRight size={11} strokeWidth={1.75} />
+          <span>View fresh additions</span>
+          <ArrowRight size={11} strokeWidth={2} />
         </Link>
       </div>
     </div>

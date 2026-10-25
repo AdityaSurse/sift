@@ -20,19 +20,19 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onSelectSuggestion,
 }) => {
   return (
-    <div className="py-16 px-4 text-center max-w-md mx-auto">
-      <div className="flex items-center justify-center h-12 w-12 rounded-surface border border-border bg-surface mx-auto mb-4 text-text-muted">
-        <SearchX size={20} strokeWidth={1.5} />
+    <div className="py-12 px-6 text-center max-w-lg mx-auto rounded-2xl border border-border/80 bg-surface shadow-card my-6">
+      <div className="flex items-center justify-center h-12 w-12 rounded-full bg-surface-subdued text-text-muted mx-auto mb-4">
+        <SearchX size={22} strokeWidth={1.5} />
       </div>
 
-      <h3 className="font-sans text-16 font-medium text-text mb-1.5">
+      <h3 className="font-sans text-18 font-bold text-text mb-2">
         No openings matched your search
       </h3>
 
-      <p className="font-sans text-13 text-text-muted leading-relaxed mb-6">
+      <p className="font-sans text-14 text-text-muted leading-relaxed mb-6">
         {query ? (
           <>
-            No verified company postings matched <span className="text-text font-mono">"{query}"</span>.
+            No verified company postings matched <span className="text-text font-semibold">"{query}"</span>.
             Try broadening your location, removing duration constraints, or searching by functional role.
           </>
         ) : (
@@ -43,18 +43,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       {/* Suggested Queries */}
       {onSelectSuggestion && (
         <div className="mb-6">
-          <p className="font-mono text-12 text-text-muted uppercase tracking-wider mb-2">
-            Try searching for:
+          <p className="font-sans text-12 font-semibold text-text uppercase tracking-wider mb-2.5">
+            Suggested searches:
           </p>
-          <div className="flex flex-col gap-1.5 items-center">
+          <div className="flex flex-wrap justify-center gap-2">
             {SUGGESTIONS.map((sug) => (
               <button
                 key={sug}
                 type="button"
                 onClick={() => onSelectSuggestion(sug)}
-                className="font-mono text-12 text-accent hover:underline focus-visible:outline-none"
+                className="rounded-full border border-border bg-surface-subdued px-3.5 py-1 font-sans text-12 font-medium text-accent hover:border-accent/40 transition-colors"
               >
-                "{sug}"
+                {sug}
               </button>
             ))}
           </div>
@@ -65,7 +65,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         <button
           type="button"
           onClick={onReset}
-          className="rounded-control border border-border bg-surface px-4 py-2 font-sans text-13 text-text hover:border-border-strong hover:text-accent transition-colors duration-150 ease-editorial"
+          className="rounded-full bg-btn-primary px-6 py-2.5 font-sans text-13 font-semibold text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm"
         >
           Reset all filters
         </button>
@@ -73,3 +73,5 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     </div>
   );
 };
+
+export default EmptyState;

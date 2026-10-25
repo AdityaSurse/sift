@@ -1,52 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Search, X } from 'lucide-react';
-
-const REALISTIC_PLACEHOLDERS = [
-  '6 month embedded software internship in Bangalore, fresher',
-  'Senior React frontend engineer in London, remote',
-  'Full time machine learning engineer in San Francisco',
-  'Staff DevOps engineer remote USA',
-  'Entry level iOS mobile developer in Tokyo',
-  'Product designer hybrid in Toronto, Figma',
-];
+import { Search, X } from 'lucide-react';
 
 interface SearchBarProps {
-  value: string;
-  onChange: (val: string) => void;
-  onSubmit: (val: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
+  onSubmit: (value: string) => void;
   placeholder?: string;
   autoFocus?: boolean;
-  size?: 'large' | 'default';
   className?: string;
+  size?: 'normal' | 'large';
 }
 
+const DEFAULT_ROTATING_PROMPTS = [
+  'Senior React frontend engineer in London, remote',
+  '6 month embedded software internship in Bangalore, fresher',
+  'Full time machine learning engineer in San Francisco',
+  'Staff DevOps engineer remote USA',
+];
+
+/**
+ * Editorial SearchBar Component
+ * Why: Features smooth rounded-full capsule architecture, rotating suggestions,
+ * and high-contrast Caspian pill trigger matching Simplify's primary layout.
+ */
 export const SearchBar: React.FC<SearchBarProps> = ({
-  value,
+  value: controlledValue,
   onChange,
   onSubmit,
   placeholder,
   autoFocus = false,
-  size = 'default',
   className = '',
+  size = 'normal',
 }) => {
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [internalValue, setInternalValue] = useState(controlledValue || '');
+  const [promptIndex, setPromptIndex] = useState(0);
 
-  // Cycle placeholder example queries smoothly every 4 seconds when user hasn't typed
+  const value = controlledValue !== undefined ? controlledValue : internalValue;
+
+  // Animate rotating placeholder if none provided
   useEffect(() => {
     if (placeholder) return;
     const interval = setInterval(() => {
-      setPlaceholderIndex((prev) => (prev + 1) % REALISTIC_PLACEHOLDERS.length);
-    }, 4000);
+      setPromptIndex((prev) => (prev + 1) % DEFAULT_ROTATING_PROMPTS.length);
+    }, 3800);
     return () => clearInterval(interval);
   }, [placeholder]);
 
-  const activePlaceholder = placeholder || REALISTIC_PLACEHOLDERS[placeholderIndex];
+  const activePlaceholder = placeholder || `Try: "${DEFAULT_ROTATING_PROMPTS[promptIndex]}"`;
 
-  // Submit either the user's typed input or the active rotating example if input is empty
-  const handleTriggerSearch = (): void => {
-    const queryToSearch = value.trim() || activePlaceholder;
-    if (!value.trim()) {
-      onChange(activePlaceholder);
+  const handleTriggerSearch = (forcedQuery?: string): void => {
+    const queryToSearch = forcedQuery !== undefined ? forcedQuery : value;
+    if (onChange) {
+      onChange(queryToSearch);
     }
     onSubmit(queryToSearch);
   };
@@ -62,59 +67,56 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div
-      className={`relative flex items-center w-full rounded-surface bg-surface border border-border/80 transition-all duration-150 ease-editorial focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15 ${
+      className={`relative flex items-center w-full rounded-full bg-surface border border-border/80 shadow-card transition-all duration-200 ease-editorial focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 ${
         isLarge ? 'p-1.5 sm:p-2' : 'p-1'
       } ${className}`}
     >
-      <div className="flex items-center justify-center pl-3 pr-2 text-text-muted">
-        <Search size={isLarge ? 18 : 15} strokeWidth={1.5} className="text-text-muted/80" />
+      <div className="flex items-center justify-center pl-3.5 pr-2 text-text-muted">
+        <Search size={isLarge ? 18 : 15} strokeWidth={1.5} className="text-text-muted" />
       </div>
 
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          setInternalValue(e.target.value);
+          if (onChange) onChange(e.target.value);
+        }}
         onKeyDown={handleKeyDown}
         placeholder={activePlaceholder}
         autoFocus={autoFocus}
         spellCheck={false}
-        className={`w-full bg-transparent text-text placeholder:text-text-muted/50 focus:outline-none font-sans ${
-          isLarge ? 'text-15 sm:text-16 py-2 px-1' : 'text-13 py-1 px-1'
+        className={`w-full bg-transparent font-sans text-text placeholder:text-text-muted/50 focus:outline-none ${
+          isLarge ? 'text-15 sm:text-16 py-2 px-1' : 'text-13 sm:text-14 py-1.5 px-1'
         }`}
       />
 
-      {/* Clear Button */}
       {value && (
         <button
           type="button"
-          onClick={() => onChange('')}
-          className="p-1.5 text-text-muted hover:text-text rounded-control transition-colors duration-150 ease-editorial mr-1 focus-visible:outline-none"
-          title="Clear search"
-          aria-label="Clear search"
+          onClick={() => {
+            setInternalValue('');
+            if (onChange) onChange('');
+            onSubmit('');
+          }}
+          className="p-1.5 mr-1 text-text-muted hover:text-text rounded-full transition-colors"
+          title="Clear query"
         >
-          <X size={15} strokeWidth={1.5} />
+          <X size={14} strokeWidth={2} />
         </button>
       )}
 
-      {/* Submit Action Button */}
       <button
         type="button"
-        onClick={handleTriggerSearch}
-        className={`flex items-center justify-center rounded-control bg-accent text-white hover:bg-accent-hover transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent flex-shrink-0 ${
-          isLarge ? 'h-9 sm:h-10 px-4 gap-1.5 font-sans text-13 sm:text-14 font-medium' : 'h-7 w-7 sm:h-8 sm:w-8'
+        onClick={() => handleTriggerSearch()}
+        className={`flex-shrink-0 flex items-center justify-center rounded-full bg-btn-primary font-sans font-semibold text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm ${
+          isLarge ? 'px-6 py-2.5 text-14' : 'px-4 py-1.5 text-12'
         }`}
-        title="Search jobs"
-        aria-label="Search jobs"
       >
-        {isLarge ? (
-          <>
-            <span>Search</span>
-            <ArrowRight size={15} strokeWidth={1.5} />
-          </>
-        ) : (
-          <ArrowRight size={13} strokeWidth={1.5} />
-        )}
+        Search
       </button>
     </div>
   );
 };
+
+export default SearchBar;
