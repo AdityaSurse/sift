@@ -15,6 +15,42 @@ logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
 
+# Legacy model name translation for Gemini API changes
+MODEL_ALIASES: dict[str, str] = {
+    "gemini-1.5-flash": "gemini-3.5-flash-lite",
+    "gemini-2.5-flash": "gemini-3.5-flash-lite",
+    "gemini-flash": "gemini-3.5-flash-lite",
+    "text-embedding-004": "gemini-embedding-001",
+}
+
+
+def clean_gemini_schema(schema_dict: dict[str, Any]) -> dict[str, Any]:
+    """Inlines Pydantic $defs and $ref definitions for Gemini REST API compatibility.
+    
+    Why: The Gemini REST API responseSchema rejects OpenAPI $defs and $ref pointers with
+    HTTP 400 Bad Request, requiring a dereferenced and inlined schema hierarchy.
+    """
+    defs = schema_dict.pop("$defs", {})
+    if not defs:
+        defs = schema_dict.pop("definitions", {})
+
+    def resolve(node: Any) -> Any:
+        if isinstance(node, dict):
+            if "$ref" in node:
+                ref_key = node["$ref"].split("/")[-1]
+                if ref_key in defs:
+                    return resolve(defs[ref_key].copy())
+            return {
+                k: resolve(v)
+                for k, v in node.items()
+                if k not in ["title", "default", "$defs"]
+            }
+        elif isinstance(node, list):
+            return [resolve(x) for x in node]
+        return node
+
+    return resolve(schema_dict)
+
 
 class GeminiClient:
     """Client for Google Gemini REST API supporting structured output and vector embeddings.
@@ -33,8 +69,10 @@ class GeminiClient:
     ) -> None:
         settings = get_settings()
         self.api_key = api_key if api_key is not None else settings.gemini_api_key
-        self.model = model or settings.sift_llm_model
-        self.embedding_model = embedding_model or settings.sift_embedding_model
+        raw_model = model or settings.sift_llm_model
+        self.model = MODEL_ALIASES.get(raw_model, raw_model)
+        raw_embedding = embedding_model or settings.sift_embedding_model
+        self.embedding_model = MODEL_ALIASES.get(raw_embedding, raw_embedding)
         self.rpm_limit = rpm_limit or settings.sift_llm_rpm_limit
         self._external_client = http_client
         self._base_url = "https://generativelanguage.googleapis.com/v1beta"
@@ -115,7 +153,7 @@ class GeminiClient:
             body["systemInstruction"] = {"parts": [{"text": system_instruction}]}
 
         # Provide JSON Schema definition to guide structured generation
-        json_schema = schema.model_json_schema()
+        json_schema = clean_gemini_schema(schema.model_json_schema())
         body["generationConfig"]["responseSchema"] = json_schema
 
         headers = {"Content-Type": "application/json"}
