@@ -82,33 +82,48 @@ def compute_match_reasons(
     return reasons
 
 
-async def search_jobs(
-    query: str,
+async def search_jobs_paginated(
     session: AsyncSession,
-    limit: int = 50,
+    query: Optional[str] = None,
+    explicit_intent: Optional[SearchIntent] = None,
+    page: int = 1,
+    page_size: int = 20,
     client: Optional[GeminiClient] = None,
-) -> list[SearchResult]:
-    """Executes a hybrid search combining structured SQL filters, vector cosine similarity, and FTS rank.
+) -> tuple[list[SearchResult], int, SearchIntent]:
+    """Executes a paginated hybrid search combining explicit filters, parsed query intent, vector cosine similarity, and FTS rank.
     
-    Why: Combining dense vector cosine similarity (for semantic understanding) with sparse SQL filters
-    (for hard constraints like location/contract) prevents irrelevant jobs from polluting top results.
+    Why: Explicit URL parameters override LLM-parsed attributes so user UI selections take strict precedence.
     """
-    clean_query = query.strip()
-    if not clean_query:
-        return []
-
+    clean_query = query.strip() if query else ""
     ai_client = client or GeminiClient()
 
-    # Step 1: Parse query into structured intent
-    intent = await parse_query(clean_query, client=ai_client)
+    # Step 1: Resolve SearchIntent from query text or explicit overrides
+    if clean_query:
+        intent = await parse_query(clean_query, client=ai_client)
+        if explicit_intent:
+            if explicit_intent.employment_type is not None:
+                intent.employment_type = explicit_intent.employment_type
+            if explicit_intent.max_duration_months is not None:
+                intent.max_duration_months = explicit_intent.max_duration_months
+            if explicit_intent.experience_level is not None:
+                intent.experience_level = explicit_intent.experience_level
+            if explicit_intent.location is not None:
+                intent.location = explicit_intent.location
+            if explicit_intent.remote_type is not None:
+                intent.remote_type = explicit_intent.remote_type
+            if explicit_intent.role_keywords is not None:
+                intent.role_keywords = explicit_intent.role_keywords
+    else:
+        intent = explicit_intent.model_copy() if explicit_intent else SearchIntent()
 
-    # Step 2: Generate embedding vector for query
+    # Step 2: Generate embedding vector if search text or keywords are present
     query_vector: Optional[list[float]] = None
-    try:
-        embed_input = intent.role_keywords or clean_query
-        query_vector = await embed_query_text(embed_input, client=ai_client)
-    except Exception as e:
-        logger.info("Could not generate query embedding (%s); proceeding with lexical/filter search", e)
+    embed_input = intent.role_keywords or clean_query
+    if embed_input:
+        try:
+            query_vector = await embed_query_text(embed_input, client=ai_client)
+        except Exception as e:
+            logger.info("Could not generate query embedding (%s); proceeding with lexical/filter search", e)
 
     # Step 3: Construct SQL predicate conditions from SearchIntent
     conditions = [Job.is_open.is_(True)]
@@ -140,31 +155,46 @@ async def search_jobs(
             )
         )
 
-    # Step 4: Construct hybrid scoring expression
-    # Full-text lexical search rank
+    # Step 4: Calculate total matching count
+    count_stmt = select(func.count(Job.id)).where(*conditions)
+    total_count = (await session.execute(count_stmt)).scalar_one()
+
+    if total_count == 0:
+        return [], 0, intent
+
+    # Step 5: Construct hybrid scoring expression
     text_to_search = intent.role_keywords or clean_query
-    fts_rank_expr = func.coalesce(
-        func.ts_rank_cd(Job.search_vector, func.plainto_tsquery("english", text_to_search)),
-        0.0,
-    )
+    if text_to_search:
+        fts_rank_expr = func.coalesce(
+            func.ts_rank_cd(Job.search_vector, func.plainto_tsquery("english", text_to_search)),
+            0.0,
+        )
+    else:
+        fts_rank_expr = func.coalesce(0.0, 0.0)
 
     if query_vector is not None:
-        # Cosine similarity in pgvector is (1 - cosine_distance)
         cosine_distance_expr = Job.embedding.cosine_distance(query_vector)
         vector_sim_expr = func.greatest(0.0, 1.0 - cosine_distance_expr)
-        # Hybrid formula: 80% vector similarity + 20% full-text keyword boost
         score_expr = func.coalesce((vector_sim_expr * 0.8) + (func.least(fts_rank_expr, 1.0) * 0.2), 0.0)
-    else:
+        order_clause = score_expr.desc()
+    elif text_to_search:
         vector_sim_expr = func.coalesce(0.0, 0.0)
         score_expr = fts_rank_expr
+        order_clause = score_expr.desc()
+    else:
+        vector_sim_expr = func.coalesce(0.0, 0.0)
+        score_expr = func.coalesce(1.0, 1.0)
+        order_clause = Job.first_seen_at.desc()
 
-    # Query with selectinload to fetch company relationship without N+1 queries
+    # Step 6: Execute paginated query with company relationship loaded
+    offset = max(0, (page - 1) * page_size)
     stmt = (
         select(Job, score_expr.label("hybrid_score"), vector_sim_expr.label("v_sim"), fts_rank_expr.label("f_rank"))
         .options(selectinload(Job.company))
         .where(*conditions)
-        .order_by(score_expr.desc())
-        .limit(limit)
+        .order_by(order_clause)
+        .offset(offset)
+        .limit(page_size)
     )
 
     result = await session.execute(stmt)
@@ -197,4 +227,22 @@ async def search_jobs(
             )
         )
 
+    return results, total_count, intent
+
+
+async def search_jobs(
+    query: str,
+    session: AsyncSession,
+    limit: int = 50,
+    client: Optional[GeminiClient] = None,
+) -> list[SearchResult]:
+    """Compatibility wrapper preserving the single-page search interface."""
+    results, _, _ = await search_jobs_paginated(
+        session=session,
+        query=query,
+        page=1,
+        page_size=limit,
+        client=client,
+    )
     return results
+

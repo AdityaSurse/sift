@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     sift_env: str = Field(default="development", description="Runtime environment: development or production")
     sift_host: str = Field(default="0.0.0.0", description="Host address for API server")
     sift_port: int = Field(default=8000, description="Port for API server")
+    sift_frontend_origin: str = Field(
+        default="http://localhost:5173",
+        description="Allowed CORS origin for frontend web application",
+    )
+    sift_api_rate_limit_per_minute: int = Field(
+        default=60,
+        description="Maximum requests per minute permitted per client IP address",
+    )
 
     # Storage
     sift_database_url: str = Field(
