@@ -1,6 +1,6 @@
 # Sift
 
-> **The jobs nobody posts.** A polite, AI-enriched job-discovery engine aggregating openings directly from verified company career pages and ATS platforms.
+> **The jobs nobody posts.** A polite, AI-enriched job-discovery engine that aggregates openings directly from company career pages and ATS platforms, enriches them with LLMs, and lets users search in natural language with direct links to apply.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/)
@@ -8,242 +8,305 @@
 [![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16+-336791.svg)](https://www.postgresql.org/)
 [![pgvector](https://img.shields.io/badge/pgvector-0.8+-336791.svg)](https://github.com/pgvector/pgvector)
 [![React 19](https://img.shields.io/badge/React-19+-61DAFB.svg)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4+-38B2AC.svg)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://www.typescriptlang.org/)
 
 ---
 
-## Live Demo & Documentation
+## High-Level Architecture
 
-- **Web Application**: [https://sift-frontend.vercel.app](https://sift-frontend.vercel.app) *(or `http://localhost:5173` in local dev)*
-- **API Documentation**: [https://sift-backend.onrender.com/docs](https://sift-backend.onrender.com/docs) *(or `http://localhost:8000/docs` in local dev)*
-- **Health Check Endpoint**: `/health`
-- **Internal Telemetry**: `/admin` *(token protected via `SIFT_ADMIN_TOKEN`)*
-
----
-
-## Interface Previews
-
-### 1. Editorial Landing Page (`/`)
-Spacious, typography-first landing hero featuring an *Instrument Serif* headline, a natural-language search bar with cycling realistic query placeholders, 4 example prompt chips, and quiet live index statistics.
-
-```text
-       ┌──────────────────────────────────────────────────────────────┐
-       │                                                              │
-       │                   The jobs nobody posts.                     │
-       │                                                              │
-       │     Aggregated directly from company career portals and      │
-       │     public ATS endpoints. Enriched with AI. Zero spam.       │
-       │                                                              │
-       │   [ 🔍  6 month embedded software internship in Bangalore  →]│
-       │                                                              │
-       │   Examples: [Embedded Bangalore] [Senior React] [ML SF]     │
-       │   ────────────────────────────────────────────────────────   │
-       │   Indexing direct ATS boards across verified open roles      │
-       └──────────────────────────────────────────────────────────────┘
-```
-
-### 2. Dense Discovery Results (`/search`)
-Features a 6-facet collapsible filter rail, keyboard-driven navigation (`j`/`k` / `Enter`), tinted monogram squares, Geist Mono metadata lines, explainable *"Why this matched"* rationale badges, and a right-side slide-over detail drawer.
-
-```text
- ┌──────────────────────┬──────────────────────────────────────────────────────────┐
- │ FILTERS              │ 142 positions found for "embedded software"              │
- │                      ├──────────────────────────────────────────────────────────┤
- │ [Contract Type]      │ [L] Embedded Firmware Engineer at Linear                 │
- │  Internship  (24)    │     Munich, Germany · Internship · 6 mo tenure · Onsite  │
- │  Full-Time   (96)    │     ● Matches internship contract · Tenure: 6 mo         │
- │                      │     [C++] [FreeRTOS] [ARM]                 [Save] [Apply]│
- │ [Max Duration]       ├──────────────────────────────────────────────────────────┤
- │  [====•========] 6mo │ [F] Systems Engineer at Figma                            │
- │                      │     San Francisco, CA · Full-Time · Senior tier          │
- │ [Experience Level]   │     ● Seniority: senior tier · Tech stack: Rust          │
- │  Intern  Entry  Sr   │     [Rust] [Wasm] [Linux]                  [Save] [Apply]│
- └──────────────────────┴──────────────────────────────────────────────────────────┘
-```
-
----
-
-## Final Architecture
-
-Sift is architected as an asynchronous crawler and enrichment pipeline feeding a high-performance hybrid search engine:
+Sift is split into an asynchronous crawler and enrichment pipeline feeding a high-performance hybrid search engine:
 
 ```mermaid
 flowchart TD
-    subgraph DataSources ["External Company Portals & ATS Feeds"]
-        GH["Greenhouse API<br/>boards-api.greenhouse.io"]
-        LEV["Lever Postings API<br/>api.lever.co/v0/postings"]
-        ASH["Ashby Public API<br/>api.ashbyhq.com/posting-api"]
-        CUST["Custom Career Pages<br/>Playwright Scraper"]
+    subgraph Sources ["1. Direct ATS Feeds"]
+        GH["Greenhouse API"]
+        LEV["Lever Postings API"]
+        ASH["Ashby Posting API"]
+        CUST["Career Page Scraper"]
     end
 
-    subgraph PoliteWorker ["Asynchronous Ingestion Worker (CLI / GitHub Actions)"]
-        ROBOTS["Robots.txt Parser & Cache"]
-        THROTTLE["Domain Rate Limiter<br/>Strict 1.5s delay / domain"]
-        NORM["Normalizer Pipeline<br/>HTML sanitization & deduplication"]
-        MAINT["Maintenance Service<br/>Dedupe clusters & 3-strike expiry"]
+    subgraph Crawler ["2. Polite Crawler Core"]
+        ROBOTS{"Robots.txt Allowed?"}
+        RATE["Per-Domain Rate Limiter<br/>(1.5s delay / domain)"]
+        NORM["Normalizer Pipeline<br/>(Clean HTML & Extract Metadata)"]
     end
 
-    subgraph AI ["AI & Embeddings Engine"]
-        GEMINI_JSON["Gemini 1.5 Flash<br/>Structured JSON Extraction"]
-        GEMINI_EMBED["Google text-embedding-004<br/>768-dimensional semantic vectors"]
+    subgraph AI ["3. AI Enrichment & Vectors"]
+        GEMINI_JSON["Gemini 1.5 Flash<br/>(Structured Pydantic Extraction)"]
+        GEMINI_EMBED["Google text-embedding-004<br/>(768-dim Semantic Vector)"]
     end
 
-    subgraph Storage ["Persistent Storage Layer"]
-        PG[("PostgreSQL 16 + pgvector<br/>HNSW vector index + GIN full-text index")]
+    subgraph Storage ["4. Persistent Database"]
+        PG[("PostgreSQL 16 + pgvector<br/>(Relational Data + HNSW Index)")]
     end
 
-    subgraph APILayer ["FastAPI Engine (Port 8000)"]
-        PARSER["Query Intent Parser<br/>Translates natural language to SQL filters"]
-        HYBRID["Hybrid Search Service<br/>Vector Cosine Sim (0.8) + FTS Rank (0.2)"]
-        ADMIN["/admin/stats Router<br/>Token-protected telemetry"]
-        RATE["Per-IP Sliding Window Rate Limiter"]
+    subgraph API ["5. FastAPI Backend"]
+        PARSER["Query Parser<br/>(Natural Language to Filters)"]
+        HYBRID["Hybrid Search Engine<br/>(SQL Filters + Vector Similarity)"]
     end
 
-    subgraph FrontendLayer ["Editorial Web Client (React 19 + TypeScript + Tailwind)"]
-        LANDING["Landing (/)"]
-        RESULTS["Results Column (/search)"]
-        DRAWER["Slide-Over Detail Drawer"]
-        SAVED["Saved Positions (/saved)"]
-        ADMIN_UI["Admin Telemetry (/admin)"]
-        PALETTE["Command Palette (Cmd+K)"]
+    subgraph Frontend ["6. Editorial UI"]
+        REACT["React 19 + TypeScript<br/>(Calm Editorial Interface)"]
     end
 
-    DataSources --> ROBOTS --> THROTTLE --> NORM
-    NORM --> PG
-    NORM <--> GEMINI_JSON
-    NORM <--> GEMINI_EMBED
-    MAINT --> PG
+    subgraph Destination ["7. Direct Application"]
+        APPLY["Canonical Company Apply Page<br/>(Zero Middleman / Zero Account Wall)"]
+    end
+
+    Sources --> ROBOTS
+    ROBOTS -- Yes --> RATE --> NORM
+    ROBOTS -- No (Disallowed) --> SKIP["Skip Crawl"]
     
-    PG <--> HYBRID
-    APILayer <--> GEMINI_EMBED
-    APILayer <--> GEMINI_JSON
+    NORM --> GEMINI_JSON --> GEMINI_EMBED --> PG
     
-    FrontendLayer <-->|"REST API (/api)"| APILayer
+    REACT <-->|"REST API (/api/search)"| PARSER --> HYBRID <--> PG
+    REACT -->|"Click Apply"| APPLY
 ```
 
 ---
 
-## End-to-End Search Sequence
+## Subsystem Flowcharts
+
+### 1. Natural Language Search & Hybrid Ranking
+
+How a natural language search query is parsed, evaluated with hybrid search, and returned to the user:
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor User as Job Seeker
-    participant UI as React Client
-    participant API as FastAPI Backend
-    participant Gemini as Gemini AI
-    participant DB as Postgres + pgvector
-    participant ATS as Employer ATS Portal
-
-    User->>UI: Types: "6 month embedded software internship in Bangalore, fresher"
-    UI->>API: GET /search?q=6+month+embedded...
-    API->>Gemini: Parse query into structured SearchIntent
-    Gemini-->>API: {role_keywords: "embedded software", type: "internship", max_months: 6, level: "entry", location: "Bangalore"}
-    API->>Gemini: Generate 768-dim query embedding vector
-    Gemini-->>API: [0.021, -0.054, ...]
-    API->>DB: Execute hybrid query: SQL constraints + HNSW vector similarity + tsvector rank
-    DB-->>API: Top ranked candidate positions + match rationale
-    API-->>UI: Return SearchResponse JSON (items, total, match_reasons)
-    UI-->>User: Render dense JobRows with highlight badges
-    User->>UI: Clicks Apply on selected position
-    UI->>ATS: Direct link-out to company ATS application form in new tab
+flowchart LR
+    A["User Query<br/>'6 mo embedded internship in Bangalore'"] --> B["FastAPI /api/search"]
+    B --> C["Gemini Query Parser"]
+    
+    C --> D["Structured SearchIntent<br/>• Role: Embedded<br/>• Type: Internship<br/>• Max Months: 6<br/>• Location: Bangalore"]
+    C --> E["Query Vector<br/>(768-dim Embedding)"]
+    
+    D --> F["PostgreSQL Engine"]
+    E --> F
+    
+    F --> G["Hybrid Search Formula<br/>0.8 × Cosine Sim + 0.2 × FTS Rank<br/>Filtered by SQL Constraints"]
+    G --> H["Ranked Job Rows with Rationale<br/>('Matches 6 mo internship')"]
+    H --> I["Editorial React UI"]
 ```
 
 ---
 
-## Key Features
+### 2. Polite Crawler Pipeline
 
-1. **Natural-Language Query Parsing**: Understands conversational intent (*"fresher"* $\rightarrow$ Entry Level, *"remote UK"* $\rightarrow$ Location UK + Remote arrangement) while preserving explicit user filter overrides.
-2. **Hybrid Search Scoring**: Combines 768-dimensional vector cosine distance with PostgreSQL full-text search (`ts_rank_cd`), preventing pure semantic drift on exact technical keywords like "Rust" or "Kubernetes".
-3. **Ghost Job Closure & 3-Strike Expiry**: Re-verifies openings against company feeds. If an opening is missing across 3 consecutive successful company crawls, it is automatically marked closed.
-4. **Cross-Source Deduplication**: Normalizes titles and locations to cluster identical postings across syndication networks, preserving the highest-quality listing.
-5. **Calm Editorial Aesthetic**: Built strictly to design tokens in `docs/design-system.md`—zero generic purple/blue gradients, zero glassmorphism, zero emoji icons, full WCAG AA contrast.
-6. **100% Shareable URL State**: Every search query and filter selection is mirrored directly in browser query parameters.
-7. **Keyboard-First Ergonomics**: System-wide `Cmd/Ctrl+K` command palette, `j`/`k` row navigation, `Enter` to open, and `Esc` to dismiss drawers.
-8. **Internal Health Telemetry**: Token-protected `/admin/stats` endpoint and internal dashboard monitoring ATS distribution, 7-day crawl failures, and stale company boards.
+Every external HTTP request adheres strictly to polite crawler ethics:
 
----
-
-## What I Learned Building Sift
-
-1. **Direct ATS APIs Outperform DOM Scraping 100:1**:
-   Public ATS endpoints (Greenhouse `boards-api`, Lever `postings`, Ashby `posting-api`) return complete, structured, JSON-formatted job listings in a single round-trip. Relying on API feeds instead of brittle headless browser DOM scrapers eliminates flaky selector maintenance, reduces network egress by ~90%, and prevents bot-detection friction.
-2. **Hybrid Search is Essential for Technical Jobs**:
-   Pure vector search frequently hallucinates conceptual similarity while missing hard technical constraints (e.g. returning general Python roles for an embedded firmware query). Combining Pydantic-validated SQL filter constraints, full-text tsvector scoring (`ts_rank_cd`), and cosine vector similarity (`<->`) yielded dramatically higher precision and user trust.
-3. **Polite Crawling Requires Defensive Invariants in Code**:
-   Good web citizenship cannot be an afterthought. Enforcing domain rate limiting (`DomainRateLimiter`), robots.txt checking, transparent `User-Agent` contact headers, and blacklisting aggregator platforms (LinkedIn/Indeed) directly at the configuration boundary prevents accidental aggressive scraping and server blacklisting.
-4. **Design Discipline Over Generic Trends**:
-   Avoiding standard boilerplate templates (floating cards, purple gradients, glowing blobs) in favor of a restrained editorial design system (*Instrument Serif*, *Geist Mono*, tinted monogram squares, vermilion `#E5533D` accents, and hairline borders) created a calm, professional interface tailored for high-density discovery.
+```mermaid
+flowchart TD
+    START["Start Ingestion Run"] --> FETCH_ROBOTS["Fetch & Cache robots.txt"]
+    FETCH_ROBOTS --> CHECK_ROBOTS{"Path Disallowed?"}
+    
+    CHECK_ROBOTS -- Yes --> LOG_SKIP["Log Warning & Skip Crawl"]
+    CHECK_ROBOTS -- No --> BUCKET["Domain Rate Limiter<br/>Token Bucket (Min 1.5s Gap)"]
+    
+    BUCKET --> FETCH_JOBS["Fetch Public ATS Feed<br/>(Greenhouse / Lever / Ashby)"]
+    FETCH_JOBS --> DEDUPE_HASH{"Description Hash<br/>Changed or New?"}
+    
+    DEDUPE_HASH -- Identical --> TOUCH["Update last_crawled_at"]
+    DEDUPE_HASH -- New / Modified --> SAVE_RAW["Persist to jobs Table"]
+    SAVE_RAW --> QUEUE_ENRICH["Queue for AI Enrichment"]
+```
 
 ---
 
-## Tech Stack Reference
+### 3. AI Enrichment Pipeline
 
-| Tier | Component | Technology |
+Raw job descriptions are enriched with structured metadata using Gemini 1.5 Flash in JSON mode:
+
+```mermaid
+flowchart TD
+    RAW["Raw Job Listing<br/>(Title + Description HTML)"] --> CLEAN["Sanitize & Strip HTML"]
+    CLEAN --> GEMINI["Gemini 1.5 Flash<br/>Prompt: 'Return null instead of guessing'"]
+    
+    GEMINI --> VALIDATE{"Pydantic Schema<br/>Validation"}
+    
+    VALIDATE -- Valid --> EXTRACTED["Structured Metadata<br/>• Employment Type<br/>• Duration (months)<br/>• Experience Level<br/>• Role Category<br/>• Skills (max 12)<br/>• Remote Type"]
+    VALIDATE -- Error --> FALLBACK["Store with Raw Data Only"]
+    
+    EXTRACTED --> EMBED_GEN["text-embedding-004<br/>(Title + Category + Skills + First 1k Chars)"]
+    EMBED_GEN --> STORE_VEC["Update jobs.embedding<br/>in PostgreSQL"]
+```
+
+---
+
+### 4. Job Expiry & Deduplication (3-Strike Rule)
+
+Keeping the index clean of ghost jobs and duplicate postings across syndication networks:
+
+```mermaid
+flowchart TD
+    CRAWL_DONE["Company Crawl Completes"] --> COMPARE["Compare Live Feed vs Database"]
+    
+    COMPARE --> FOUND{"Active in Feed?"}
+    FOUND -- Yes --> RESET_STRIKE["Set missed_crawls_count = 0"]
+    FOUND -- No --> INC_STRIKE["Increment missed_crawls_count + 1"]
+    
+    INC_STRIKE --> CHECK_LIMIT{"missed_crawls >= 3?"}
+    CHECK_LIMIT -- Yes --> CLOSE_JOB["Mark status = 'closed'<br/>(Eliminate Ghost Job)"]
+    CHECK_LIMIT -- No --> KEEP_ACTIVE["Keep Active (Strike Recorded)"]
+    
+    CLOSE_JOB --> DEDUPE["Cross-Source Deduplication<br/>Cluster by normalized title + company + location"]
+```
+
+---
+
+### 5. Deployment Architecture (Planned)
+
+Target production topology with zero server maintenance overhead:
+
+```mermaid
+flowchart LR
+    subgraph CDN ["Frontend Hosting"]
+        VERCEL["Vercel<br/>(React 19 + Vite SPA)"]
+    end
+
+    subgraph Cloud ["Backend Hosting"]
+        RENDER["Container Service<br/>(FastAPI / Uvicorn Docker)"]
+    end
+
+    subgraph Data ["Managed Database"]
+        SUPABASE["Managed PostgreSQL 16<br/>(pgvector extension enabled)"]
+    end
+
+    subgraph Crons ["Scheduled Jobs"]
+        GHA["GitHub Actions Cron<br/>(Nightly Crawl & Freshness Worker)"]
+    end
+
+    USER["User Browser"] --> VERCEL
+    VERCEL -->|"API Requests (/api/*)"| RENDER
+    RENDER <--> SUPABASE
+    GHA -->|"Run CLI / Ingest"| SUPABASE
+```
+
+---
+
+## Tech Stack
+
+| Component | Technology | Rationale |
 | :--- | :--- | :--- |
-| **Backend** | API Framework | FastAPI 0.115+, Python 3.12+, Uvicorn |
-| **Database** | Relational & Vector | PostgreSQL 16, `pgvector`, SQLAlchemy 2.0 (asyncpg), Alembic |
-| **AI / ML** | Models | Google Gemini 1.5 Flash (structured output), `text-embedding-004` |
-| **Crawling** | Networking & Parsing | HTTPX, BeautifulSoup4, Playwright |
-| **Frontend** | Client Web App | React 19, TypeScript, Tailwind CSS, TanStack Query, React Router |
-| **Icons & Fonts** | Typography | Instrument Serif, Geist Sans, Geist Mono, Lucide Icons |
-| **Deployment** | Infrastructure | Docker, Render / Fly.io (Backend), Vercel (Frontend), GitHub Actions (Nightly Crawl) |
+| **Frontend** | React 19, TypeScript, Tailwind CSS | Clean typography, editorial density, zero layout shift |
+| **Backend API** | FastAPI, Python 3.12+, Uvicorn | Async I/O for high-concurrency ingestion and rapid search API responses |
+| **Database & Vector** | PostgreSQL 16 + `pgvector` | Single source of truth combining relational ACID transactions with vector similarity |
+| **AI / Structured Output** | Gemini 1.5 Flash | High throughput, strict JSON schema output, low latency |
+| **Vector Embeddings** | Google `text-embedding-004` | 768-dimensional semantic representations for hybrid search |
+| **Web Crawling** | HTTPX, BeautifulSoup4, Playwright | Polite async crawling, rate-limiting, and JS rendering when required |
+| **Package Management** | `uv` (Python) & `npm` (Node) | Instant dependency synchronization and reproducible builds |
 
 ---
 
-## Quick Start Guide
+## Project Structure
+
+```text
+sift/
+├── backend/
+│   ├── app/
+│   │   ├── ai/                 # Gemini enrichment, embeddings & query parser
+│   │   ├── api/                # FastAPI routes (/search, /jobs, /filters, /admin)
+│   │   ├── core/               # Settings, configuration & domain guardrails
+│   │   ├── crawler/            # Polite crawler core, rate-limiter & robots parser
+│   │   │   ├── connectors/     # Greenhouse, Lever, Ashby, and custom scrapers
+│   │   │   ├── client.py       # Polite HTTP client with token bucket
+│   │   │   └── robots.py       # Async robots.txt compliance checker
+│   │   ├── db/                 # PostgreSQL models, pgvector migrations & session
+│   │   ├── services/           # Hybrid search & maintenance services
+│   │   ├── cli.py              # Administrative & crawler CLI commands
+│   │   └── main.py             # ASGI entrypoint
+│   ├── tests/                  # 50+ unit & integration tests
+│   ├── Dockerfile              # Production container build
+│   └── pyproject.toml          # uv project configuration
+├── frontend/
+│   ├── src/
+│   │   ├── components/         # SearchBar, JobRow, FilterRail, Header, Drawer
+│   │   ├── pages/              # LandingPage, SearchPage, SavedPage, AdminPage
+│   │   ├── types/              # Strict TypeScript API definitions
+│   │   └── index.css           # Editorial design tokens & typography
+│   ├── package.json
+│   └── vite.config.ts
+├── docs/
+│   └── design-system.md        # UI tokens, typography & crawler ethics manifesto
+├── .github/workflows/          # CI, nightly crawl & enrichment pipelines
+├── CONTRIBUTING.md             # Guide: Add an ATS connector in <50 lines
+├── .env.example                # Safe environment template
+└── README.md
+```
+
+---
+
+## Local Development
 
 ### Prerequisites
+
 - Python 3.12+ with [`uv`](https://github.com/astral-sh/uv)
 - Node.js 20+ with `npm`
-- PostgreSQL 16 with `pgvector` enabled
+- PostgreSQL 16 with `pgvector` extension
 
-### 1. Repository Setup
+### 1. Clone & Configure
+
 ```bash
 git clone https://github.com/AdityaSurse/sift.git
 cd sift
 cp .env.example .env
 ```
 
-### 2. Backend Initialization
+### 2. Start Backend
+
 ```bash
 cd backend
 uv sync --extra dev
 uv run alembic upgrade head
 uv run uvicorn app.main:app --reload --port 8000
 ```
-API docs available at `http://localhost:8000/docs`.
 
-### 3. Frontend Initialization
+The API docs are available at `http://localhost:8000/docs`.
+
+### 3. Start Frontend
+
 ```bash
 cd ../frontend
-npm ci
+npm install
 npm run dev
 ```
-Web client available at `http://localhost:5173`.
 
-### 4. Running Crawler & Maintenance CLI Operations
+The web application is available at `http://localhost:5173`.
+
+### 4. Run Crawler & Maintenance CLI
+
 ```bash
 cd ../backend
 
-# Import seed companies
+# Import seed company list
 uv run python -m app.cli import-companies --csv-path data/companies_seed.csv
 
-# Crawl all company career boards
+# Crawl all verified career pages
 uv run python -m app.cli crawl --all --output-summary crawl_summary.json
 
-# Run AI enrichment and vector embeddings
+# Enrich raw job postings with Gemini AI
 uv run python -m app.cli enrich-and-embed --batch-size 50
 
-# Run cross-source deduplication and 3-strike job expiry
+# Run 3-strike ghost job expiry & deduplication
 uv run python -m app.cli maintenance --missed-threshold 3
 ```
 
 ---
 
+## Crawling Ethics
+
+Sift is built on strict web citizenship principles:
+
+1. **Strict Robots.txt Adherence**: Every domain's `robots.txt` is fetched, parsed, and cached. Any disallowed path is skipped immediately.
+2. **Per-Domain Rate Limiting**: Minimum delay of 1.5 seconds between requests to the same host with a token bucket concurrency limit of 1.
+3. **No Walled Gardens**: Sift **never** scrapes LinkedIn, Indeed, Glassdoor, or closed networks. We only index public ATS feeds and official career endpoints.
+4. **Transparent Identity**: All HTTP requests identify clearly:  
+   `User-Agent: SiftBot/1.0 (+https://siftjobs.com/bot; crawler@siftjobs.com)`
+5. **Direct Apply Only**: Apply links always redirect users directly to the original career portal in a new tab. We never capture applicant data, lock jobs behind accounts, or monetize referrals.
+
+---
+
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to implement a new ATS fetcher in under 50 lines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for step-by-step instructions on implementing a new ATS connector in under 50 lines.
 
 ## License
 
