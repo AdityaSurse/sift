@@ -65,6 +65,7 @@ class SearchItem(BaseModel):
     remote_type: Optional[str] = None
     duration_months: Optional[int] = None
     skills: list[str] = Field(default_factory=list)
+    posted_at: Optional[datetime] = None
     score: float
     match_reasons: list[str] = Field(default_factory=list)
 
@@ -124,8 +125,34 @@ class FilterOptionsResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# System Schemas
+# Landing & System Schemas
 # ---------------------------------------------------------------------------
+
+class LandingCategoryCount(BaseModel):
+    """Category tile data with real count and search query mapping."""
+    id: str
+    label: str
+    count: int
+    query_param: str
+
+
+class CompanyDirectoryItem(BaseModel):
+    """Company overview item with live open role count and ATS source."""
+    name: str
+    slug: str
+    ats_type: str
+    jobs_count: int
+
+
+class LandingStatsResponse(BaseModel):
+    """Dynamic verified statistics for Sift landing page and company roster."""
+    roles_added_24h: int
+    total_roles: int
+    total_companies: int
+    ats_platforms_count: int
+    categories: list[LandingCategoryCount]
+    top_companies: list[CompanyDirectoryItem]
+
 
 class HealthResponse(BaseModel):
     """System health check payload verifying database and runtime status."""

@@ -10,6 +10,20 @@ interface JobRowProps {
   isSelected?: boolean;
 }
 
+/** Formats ISO timestamp to quiet relative time string (e.g. "Today", "2d ago") */
+function formatRelativeDate(dateStr?: string | null): string {
+  if (!dateStr) return 'Active';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return 'Active';
+  const now = new Date();
+  const diffHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+  if (diffHours < 24) return 'Today';
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) return '1d ago';
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 export const JobRow: React.FC<JobRowProps> = ({
   job,
   isSaved,
@@ -127,6 +141,11 @@ export const JobRow: React.FC<JobRowProps> = ({
             ))}
           </div>
         )}
+
+        {/* Posted relative date */}
+        <span className="font-mono text-11 text-text-muted/70 whitespace-nowrap hidden xs:inline select-none">
+          {formatRelativeDate(job.posted_at)}
+        </span>
 
         <div className="flex items-center gap-1.5">
           {/* Save / Bookmark Button */}

@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from typing import Optional
 
@@ -31,6 +32,7 @@ class SearchResult(BaseModel):
     remote_type: Optional[str] = None
     duration_months: Optional[int] = None
     skills: list[str] = Field(default_factory=list)
+    posted_at: Optional[datetime] = None
     score: float
     match_reasons: list[str]
 
@@ -222,6 +224,7 @@ async def search_jobs_paginated(
                 remote_type=job.remote_type.value if job.remote_type else None,
                 duration_months=job.duration_months,
                 skills=job.skills or [],
+                posted_at=job.posted_at or job.first_seen_at,
                 score=round(float(score or 0.0), 3),
                 match_reasons=reasons,
             )

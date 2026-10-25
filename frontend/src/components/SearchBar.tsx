@@ -63,7 +63,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div
       className={`relative flex items-center w-full rounded-surface bg-surface border border-border/80 transition-all duration-150 ease-editorial focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15 ${
-        isLarge ? 'p-1.5 sm:p-2 shadow-sm' : 'p-1'
+        isLarge ? 'p-1.5 sm:p-2' : 'p-1'
       } ${className}`}
     >
       <div className="flex items-center justify-center pl-3 pr-2 text-text-muted">

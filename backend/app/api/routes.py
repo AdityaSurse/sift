@@ -1,25 +1,29 @@
+from datetime import datetime, timedelta, timezone
 import math
 import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.ai.query_parser import SearchIntent
 from app.api.schemas import (
+    CompanyDirectoryItem,
     ErrorResponse,
     FilterCategoryItem,
     FilterLocationItem,
     FilterOptionItem,
     FilterOptionsResponse,
     JobDetailResponse,
+    LandingCategoryCount,
+    LandingStatsResponse,
     ParsedIntentResponse,
     SearchItem,
     SearchResponse,
 )
-from app.db.models import EmploymentType, ExperienceLevel, Job, RemoteType
+from app.db.models import Company, EmploymentType, ExperienceLevel, Job, RemoteType
 from app.db.session import get_db
 from app.services.search import search_jobs_paginated
 
@@ -121,6 +125,7 @@ async def search_endpoint(
             remote_type=r.remote_type,
             duration_months=r.duration_months,
             skills=r.skills,
+            posted_at=r.posted_at,
             score=r.score,
             match_reasons=r.match_reasons,
         )
@@ -303,3 +308,126 @@ async def get_filter_options(
         locations=locations,
         total_open_jobs=total_open_jobs,
     )
+
+
+@router.get(
+    "/stats/summary",
+    response_model=LandingStatsResponse,
+    summary="Landing page verified statistics",
+    description="Returns dynamic, verified platform statistics, category counts, and company directory directly from the database.",
+)
+async def get_landing_stats(
+    session: AsyncSession = Depends(get_db),
+) -> LandingStatsResponse:
+    """Aggregates verified live statistics across jobs, employers, and ATS platforms."""
+    now = datetime.now(timezone.utc)
+    since_24h = now - timedelta(hours=24)
+
+    # 1. 24h count
+    res_24h = await session.execute(
+        select(func.count(Job.id)).where(Job.is_open.is_(True), Job.first_seen_at >= since_24h)
+    )
+    roles_added_24h = res_24h.scalar_one()
+
+    # 2. Total roles & companies
+    total_roles = (await session.execute(select(func.count(Job.id)).where(Job.is_open.is_(True)))).scalar_one()
+    total_companies = (await session.execute(
+        select(func.count(func.distinct(Job.company_id))).where(Job.is_open.is_(True))
+    )).scalar_one()
+
+    # 3. Distinct ATS count
+    ats_count = (await session.execute(
+        select(func.count(func.distinct(Company.ats_type)))
+        .join(Job, Job.company_id == Company.id)
+        .where(Job.is_open.is_(True))
+    )).scalar_one()
+
+    # 4. Live category counts
+    c_embedded = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            or_(Job.title.ilike("%embedded%"), Job.title.ilike("%firmware%"))
+        )
+    )).scalar_one()
+    c_software = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            or_(Job.title.ilike("%software%"), Job.title.ilike("%engineer%"))
+        )
+    )).scalar_one()
+    c_ai_ml = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            or_(Job.title.ilike("%ai%"), Job.title.ilike("%machine learning%"), Job.title.ilike("%ml%"))
+        )
+    )).scalar_one()
+    c_hardware = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            or_(Job.title.ilike("%hardware%"), Job.title.ilike("%electrical%"), Job.title.ilike("%silicon%"))
+        )
+    )).scalar_one()
+    c_data = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            Job.title.ilike("%data%")
+        )
+    )).scalar_one()
+    c_robotics = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            or_(Job.title.ilike("%robot%"), Job.title.ilike("%autonomous%"), Job.title.ilike("%perception%"))
+        )
+    )).scalar_one()
+    c_internships = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            Job.employment_type == EmploymentType.INTERNSHIP
+        )
+    )).scalar_one()
+    c_remote = (await session.execute(
+        select(func.count(Job.id)).where(
+            Job.is_open.is_(True),
+            Job.remote_type == RemoteType.REMOTE
+        )
+    )).scalar_one()
+
+    categories = [
+        LandingCategoryCount(id="embedded", label="Embedded & Firmware", count=c_embedded, query_param="embedded"),
+        LandingCategoryCount(id="software", label="Software Engineering", count=c_software, query_param="software"),
+        LandingCategoryCount(id="ai_ml", label="AI / ML", count=c_ai_ml, query_param="machine learning"),
+        LandingCategoryCount(id="hardware", label="Hardware & Silicon", count=c_hardware, query_param="hardware"),
+        LandingCategoryCount(id="data", label="Data & Analytics", count=c_data, query_param="data"),
+        LandingCategoryCount(id="robotics", label="Robotics & Autonomy", count=c_robotics, query_param="robotics"),
+        LandingCategoryCount(id="internships", label="Internships", count=c_internships, query_param="internship"),
+        LandingCategoryCount(id="remote", label="Remote", count=c_remote, query_param="remote"),
+    ]
+
+    # 5. Top companies roster
+    top_comp_stmt = (
+        select(Company.name, Company.slug, Company.ats_type, func.count(Job.id))
+        .join(Job, Job.company_id == Company.id)
+        .where(Job.is_open.is_(True))
+        .group_by(Company.name, Company.slug, Company.ats_type)
+        .order_by(func.count(Job.id).desc())
+    )
+    comp_rows = (await session.execute(top_comp_stmt)).all()
+    top_companies = [
+        CompanyDirectoryItem(
+            name=name,
+            slug=slug,
+            ats_type=ats.value,
+            jobs_count=cnt,
+        )
+        for name, slug, ats, cnt in comp_rows
+    ]
+
+    return LandingStatsResponse(
+        roles_added_24h=roles_added_24h,
+        total_roles=total_roles,
+        total_companies=total_companies,
+        ats_platforms_count=ats_count,
+        categories=categories,
+        top_companies=top_companies,
+    )
+

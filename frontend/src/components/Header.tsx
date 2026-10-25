@@ -1,48 +1,65 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bookmark, Command, Moon, Search, Sun } from 'lucide-react';
+import { Bookmark, Briefcase, Building2, Command, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { useSavedJobs } from '../hooks/useSavedJobs';
 
 interface HeaderProps {
   onOpenCommandPalette?: () => void;
+  onOpenCompanies?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
+/**
+ * Editorial top navigation bar adhering to /docs/design-system.md.
+ * Why: Surfaces core discovery routes (Jobs, Companies, Saved) and quick actions quietly.
+ */
+export const Header: React.FC<HeaderProps> = ({
+  onOpenCommandPalette,
+  onOpenCompanies,
+}) => {
   const { theme, toggleTheme } = useTheme();
   const { savedJobs } = useSavedJobs();
   const location = useLocation();
 
-  const isSearchActive = location.pathname.startsWith('/search');
+  const isJobsActive = location.pathname.startsWith('/jobs') || location.pathname.startsWith('/search');
   const isSavedActive = location.pathname === '/saved';
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border/80 bg-bg/95 backdrop-blur-sm px-4 sm:px-6 py-2.5 transition-colors duration-150 ease-editorial">
+    <header className="sticky top-0 z-30 w-full border-b border-border/80 bg-bg px-4 sm:px-6 py-2.5 transition-colors duration-150 ease-editorial">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        {/* Brand Wordmark */}
-        <div className="flex items-center gap-6">
+        {/* Brand Wordmark & Nav */}
+        <div className="flex items-center gap-6 sm:gap-8">
           <Link
             to="/"
             className="flex items-center gap-2 text-text hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
           >
-            <span className="font-mono text-14 font-bold tracking-wider text-accent">SIFT</span>
-            <span className="hidden sm:inline font-mono text-12 text-text-muted/60">/</span>
-            <span className="hidden sm:inline font-mono text-12 text-text-muted">career index</span>
+            <span className="font-mono text-15 font-bold tracking-wider text-accent">SIFT</span>
+            <span className="hidden sm:inline font-mono text-11 text-text-muted/60">/</span>
+            <span className="hidden sm:inline font-mono text-11 text-text-muted">career index</span>
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="flex items-center gap-2 text-13 font-sans">
+          {/* Navigation Links: Jobs, Companies, Saved */}
+          <nav className="flex items-center gap-1 sm:gap-2 text-13 font-sans">
             <Link
-              to="/search"
+              to="/jobs"
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition-colors duration-150 ease-editorial ${
-                isSearchActive
+                isJobsActive
                   ? 'text-text font-medium bg-surface border border-border/80'
                   : 'text-text-muted hover:text-text'
               }`}
             >
-              <Search size={13} strokeWidth={1.5} />
-              <span>Search</span>
+              <Briefcase size={13} strokeWidth={1.5} />
+              <span>Jobs</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={onOpenCompanies}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded text-text-muted hover:text-text transition-colors duration-150 ease-editorial"
+            >
+              <Building2 size={13} strokeWidth={1.5} />
+              <span>Companies</span>
+            </button>
 
             <Link
               to="/saved"
@@ -63,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
           </nav>
         </div>
 
-        {/* Global Actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-2">
           {/* Command Palette Trigger */}
           <button
@@ -81,16 +98,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCommandPalette }) => {
 
           {/* Theme Toggle */}
           <button
-            id="header-theme-toggle"
+            id="theme-toggle-btn"
             onClick={toggleTheme}
-            className="flex items-center justify-center h-7 w-7 rounded border border-border/80 bg-surface/60 text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
-            title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-            aria-label="Toggle theme"
+            className="flex items-center justify-center w-8 h-8 rounded border border-border/80 bg-surface/60 text-text-muted hover:text-text hover:border-border-strong transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-label="Toggle visual theme"
           >
             {theme === 'dark' ? (
-              <Sun size={14} strokeWidth={1.5} className="text-text-muted hover:text-accent" />
+              <Sun size={14} strokeWidth={1.5} />
             ) : (
-              <Moon size={14} strokeWidth={1.5} className="text-text-muted hover:text-accent" />
+              <Moon size={14} strokeWidth={1.5} />
             )}
           </button>
         </div>
