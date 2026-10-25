@@ -17,7 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from app.ai.embed import batch_embed_jobs
-from app.ai.enrich import enrich_unprocessed_jobs
+from app.ai.enrich import batch_enrich_jobs
 from app.core.config import get_settings
 from app.crawlers.detector import detect_ats
 from app.db.models import ATSType, Company, CrawlRun
@@ -343,7 +343,7 @@ async def execute_enrich_and_embed(batch_size: int = 50) -> None:
     """Runs LLM enrichment followed by vector embedding generation for newly ingested jobs."""
     logger.info("Starting AI pipeline: enrichment and embedding generation.")
     async with AsyncSessionLocal() as session:
-        enriched_count = await enrich_unprocessed_jobs(session=session, batch_size=batch_size)
+        enriched_count = await batch_enrich_jobs(session=session, batch_size=batch_size)
         logger.info(f"Enriched {enriched_count} job postings via Gemini structured output.")
 
         embedded_count = await batch_embed_jobs(session=session, batch_size=batch_size)
