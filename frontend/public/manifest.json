@@ -1,0 +1,16 @@
+{
+  "name": "Sift — Direct Career Index",
+  "short_name": "Sift",
+  "description": "Aggregated directly from company career portals and public ATS endpoints. Enriched with AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#E5533D",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

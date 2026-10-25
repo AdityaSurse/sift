@@ -1,0 +1,30 @@
+# Render Infrastructure as Code (Blueprint) Specification
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: sift-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: starter
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: SIFT_ENV
+        value: production
+      - key: SIFT_PORT
+        value: 8000
+      - key: DATABASE_URL
+        sync: false
+      - key: SIFT_DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SIFT_ADMIN_TOKEN
+        generateValue: true
+      - key: SIFT_FRONTEND_ORIGIN
+        value: https://sift-frontend.vercel.app
+      - key: SIFT_CRAWLER_USER_AGENT
+        value: SiftBot/1.0 (+https://sift-frontend.vercel.app/bot; crawler@siftjobs.com)

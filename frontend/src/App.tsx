@@ -6,6 +6,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { LandingPage } from './pages/LandingPage';
 import { SearchPage } from './pages/SearchPage';
 import { SavedPage } from './pages/SavedPage';
+import { AdminPage } from './pages/AdminPage';
 import { DesignSystemShowcase } from './pages/DesignSystemShowcase';
 
 /**
@@ -49,6 +50,7 @@ export const App: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/saved" element={<SavedPage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/design" element={<DesignSystemShowcase />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

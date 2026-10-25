@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.admin import router as admin_router
 from app.api.middleware import IPRateLimiterMiddleware, register_exception_handlers
 from app.api.routes import router as api_router
 from app.api.schemas import HealthResponse
@@ -14,6 +15,19 @@ from app.db.session import get_db
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
+
+# Initialize Sentry error reporting if DSN is configured
+if settings.sift_sentry_dsn:
+    try:
+        import sentry_sdk
+        sentry_sdk.init(
+            dsn=settings.sift_sentry_dsn,
+            environment=settings.sift_env,
+            traces_sample_rate=0.1,
+        )
+        logger.info("Sentry monitoring initialized successfully.")
+    except ImportError:
+        logger.warning("sentry-sdk not installed; continuing with standard logging.")
 
 app = FastAPI(
     title="Sift API",
@@ -49,6 +63,7 @@ app.add_middleware(
 
 # 4. Include discovery and jobs endpoints
 app.include_router(api_router)
+app.include_router(admin_router)
 
 
 @app.get(

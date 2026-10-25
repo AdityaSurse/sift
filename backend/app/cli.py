@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import csv
+import json
 import logging
 import re
 import sys
@@ -15,11 +16,14 @@ import httpx
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
+from app.ai.embed import batch_embed_jobs
+from app.ai.enrich import enrich_unprocessed_jobs
 from app.core.config import get_settings
 from app.crawlers.detector import detect_ats
 from app.db.models import ATSType, Company, CrawlRun
 from app.db.session import AsyncSessionLocal
 from app.services.ingest import ingest_company
+from app.services.maintenance import deduplicate_jobs, expire_stale_jobs
 
 logging.basicConfig(
     level=logging.INFO,
@@ -246,6 +250,7 @@ async def execute_crawl(
     company_slug: Optional[str] = None,
     all_companies: bool = False,
     max_concurrency: int = 5,
+    output_summary: Optional[str] = None,
 ) -> None:
     """Executes the ingestion pipeline across selected or all companies."""
     async with AsyncSessionLocal() as session:
@@ -306,9 +311,64 @@ async def execute_crawl(
     print(f"Closed (Ghost) Jobs:   {total_closed}")
     print("=" * 60 + "\n")
 
+    summary_data = {
+        "crawled_at": datetime.now(timezone.utc).isoformat(),
+        "duration_seconds": round(duration, 2),
+        "companies_processed": total,
+        "successful": successful,
+        "failed": total - successful,
+        "total_jobs_found": total_found,
+        "new_jobs_added": total_new,
+        "jobs_closed": total_closed,
+        "failures": [
+            {
+                "company_id": str(r.company_id),
+                "status": r.status.value,
+                "error": r.error_message,
+            }
+            for r in crawl_results
+            if r.status.value == "failed"
+        ],
+    }
+
+    if output_summary:
+        summary_path = Path(output_summary)
+        summary_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(summary_path, "w", encoding="utf-8") as f:
+            json.dump(summary_data, f, indent=2)
+        logger.info(f"Crawl summary artifact saved to {summary_path}")
+
+
+async def execute_enrich_and_embed(batch_size: int = 50) -> None:
+    """Runs LLM enrichment followed by vector embedding generation for newly ingested jobs."""
+    logger.info("Starting AI pipeline: enrichment and embedding generation.")
+    async with AsyncSessionLocal() as session:
+        enriched_count = await enrich_unprocessed_jobs(session=session, batch_size=batch_size)
+        logger.info(f"Enriched {enriched_count} job postings via Gemini structured output.")
+
+        embedded_count = await batch_embed_jobs(session=session, batch_size=batch_size)
+        logger.info(f"Generated semantic embedding vectors for {embedded_count} job postings.")
+
+
+async def execute_maintenance(
+    run_dedupe: bool = True,
+    run_expiry: bool = True,
+    missed_threshold: int = 3,
+) -> None:
+    """Executes database health routines: cross-source deduplication and 3-strike job expiry."""
+    logger.info("Executing maintenance pass.")
+    async with AsyncSessionLocal() as session:
+        if run_dedupe:
+            dedupe_res = await deduplicate_jobs(session)
+            print(f"Dedupe Pass: {dedupe_res}")
+
+        if run_expiry:
+            expiry_res = await expire_stale_jobs(session, missed_crawls_threshold=missed_threshold)
+            print(f"Expiry Pass (threshold={missed_threshold}): {expiry_res}")
+
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Sift Crawler & Company Ingestion CLI")
+    parser = argparse.ArgumentParser(description="Sift Crawler & Operations CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # import-companies command
@@ -350,13 +410,64 @@ def main() -> None:
         default=5,
         help="Max simultaneous companies crawling (default: 5)",
     )
+    crawl_parser.add_argument(
+        "--output-summary",
+        type=str,
+        default=None,
+        help="Path to save JSON crawl execution summary artifact",
+    )
+
+    # enrich-and-embed command
+    ai_parser = subparsers.add_parser("enrich-and-embed", help="Run Gemini LLM enrichment and vector embeddings")
+    ai_parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=50,
+        help="Maximum jobs to process per batch (default: 50)",
+    )
+
+    # maintenance command
+    maint_parser = subparsers.add_parser("maintenance", help="Run cross-source deduplication and 3-strike job expiry")
+    maint_parser.add_argument(
+        "--no-dedupe",
+        action="store_true",
+        help="Skip duplicate detection pass",
+    )
+    maint_parser.add_argument(
+        "--no-expire",
+        action="store_true",
+        help="Skip missed crawls expiry pass",
+    )
+    maint_parser.add_argument(
+        "--missed-threshold",
+        type=int,
+        default=3,
+        help="Consecutive missed crawls required before closing job (default: 3)",
+    )
 
     args = parser.parse_args()
 
     if args.command == "import-companies":
         asyncio.run(import_companies(args.csv_path, args.max_concurrency, args.limit))
     elif args.command == "crawl":
-        asyncio.run(execute_crawl(args.company, args.all, args.max_concurrency))
+        asyncio.run(
+            execute_crawl(
+                args.company,
+                args.all,
+                args.max_concurrency,
+                output_summary=args.output_summary,
+            )
+        )
+    elif args.command == "enrich-and-embed":
+        asyncio.run(execute_enrich_and_embed(batch_size=args.batch_size))
+    elif args.command == "maintenance":
+        asyncio.run(
+            execute_maintenance(
+                run_dedupe=not args.no_dedupe,
+                run_expiry=not args.no_expire,
+                missed_threshold=args.missed_threshold,
+            )
+        )
 
 
 if __name__ == "__main__":

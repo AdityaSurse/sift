@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Set
+from typing import Optional, Set
 
 from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -29,6 +29,16 @@ class Settings(BaseSettings):
     sift_api_rate_limit_per_minute: int = Field(
         default=60,
         description="Maximum requests per minute permitted per client IP address",
+    )
+    sift_admin_token: str = Field(
+        default="sift-secret-admin-token",
+        validation_alias=AliasChoices("sift_admin_token", "admin_token"),
+        description="Bearer or header token required for /admin/stats operations",
+    )
+    sift_sentry_dsn: Optional[str] = Field(
+        default=None,
+        validation_alias=AliasChoices("sift_sentry_dsn", "sentry_dsn"),
+        description="Optional Sentry DSN for structured production error reporting",
     )
 
     # Storage

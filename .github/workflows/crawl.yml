@@ -1,0 +1,96 @@
+name: Nightly Ingestion & Enrichment Pipeline
+
+on:
+  schedule:
+    # Trigger nightly at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      company_slug:
+        description: 'Optional single company slug to crawl (leave blank for --all)'
+        required: false
+        default: ''
+
+jobs:
+  crawl:
+    name: Polite ATS Ingestion Crawl
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SIFT_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SIFT_ENV: production
+      SIFT_CRAWLER_DEFAULT_DELAY_SEC: "1.5"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "backend/uv.lock"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        run: uv sync
+
+      - name: Run polite ingestion crawl
+        run: |
+          if [ -n "${{ github.event.inputs.company_slug }}" ]; then
+            uv run python -m app.cli crawl --company "${{ github.event.inputs.company_slug }}" --output-summary crawl_summary.json
+          else
+            uv run python -m app.cli crawl --all --output-summary crawl_summary.json
+          fi
+
+      - name: Upload crawl summary artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: crawl-summary-${{ github.run_id }}
+          path: backend/crawl_summary.json
+          retention-days: 30
+
+  enrich_and_embed:
+    name: AI Enrichment & Semantic Embeddings
+    needs: crawl
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SIFT_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SIFT_ENV: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "backend/uv.lock"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        run: uv sync
+
+      - name: Run LLM extraction and vector embeddings
+        run: uv run python -m app.cli enrich-and-embed --batch-size 100
+
+      - name: Run deduplication and 3-strike job expiry
+        run: uv run python -m app.cli maintenance --missed-threshold 3
