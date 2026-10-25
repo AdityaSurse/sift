@@ -2,7 +2,9 @@ import asyncio
 import urllib.robotparser
 from typing import Dict, Optional
 from urllib.parse import urlparse
+
 import httpx
+
 from app.core.config import get_settings
 
 

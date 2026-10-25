@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from typing import List, Optional
+
 import httpx
 
 from app.core.config import get_settings

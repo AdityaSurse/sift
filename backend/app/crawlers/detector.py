@@ -2,8 +2,8 @@ import re
 from typing import Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 
-from bs4 import BeautifulSoup
 import httpx
+from bs4 import BeautifulSoup
 
 from app.core.config import get_settings
 from app.db.models import ATSType

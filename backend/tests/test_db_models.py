@@ -1,24 +1,19 @@
-import uuid
-from datetime import datetime, timezone
 import pytest
 import pytest_asyncio
 from sqlalchemy import select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from app.core.config import get_settings
 from app.db.models import (
     ATSType,
-    Base,
     Company,
     EmploymentType,
-    ExperienceLevel,
     Job,
     RemoteType,
 )
-
-from sqlalchemy.pool import NullPool
 
 settings = get_settings()
 test_engine = create_async_engine(

@@ -1,5 +1,5 @@
 from pathlib import Path
-import pytest
+
 from app.crawlers.detector import (
     extract_ats_from_html,
     extract_ats_from_url,

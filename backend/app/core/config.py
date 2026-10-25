@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Set
-from pydantic import Field, field_validator
+
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -25,10 +26,12 @@ class Settings(BaseSettings):
     # Storage
     sift_database_url: str = Field(
         default="postgresql+asyncpg://adityasurse@localhost:5432/sift_dev",
+        validation_alias=AliasChoices("sift_database_url", "database_url"),
         description="Async database connection string for Supabase / PostgreSQL"
     )
     sift_test_database_url: str = Field(
         default="postgresql+asyncpg://adityasurse@localhost:5432/sift_test",
+        validation_alias=AliasChoices("sift_test_database_url", "test_database_url", "database_url"),
         description="Async database connection string for test runs"
     )
 

@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timezone
 from typing import Optional, Set
+
 import httpx
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert

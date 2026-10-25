@@ -1,9 +1,16 @@
 import asyncio
-import uuid
 from datetime import datetime, timezone
-from sqlalchemy import select
+
 from sqlalchemy.dialects.postgresql import insert
-from app.db.models import ATSType, Company, EmploymentType, ExperienceLevel, Job, RemoteType
+
+from app.db.models import (
+    ATSType,
+    Company,
+    EmploymentType,
+    ExperienceLevel,
+    Job,
+    RemoteType,
+)
 from app.db.session import AsyncSessionLocal
 
 SAMPLE_COMPANIES = [

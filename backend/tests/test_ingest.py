@@ -1,6 +1,5 @@
 import json
 import uuid
-from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch
 
 import httpx
@@ -15,9 +14,16 @@ from app.crawlers.ashby import AshbyFetcher
 from app.crawlers.base import RawJob
 from app.crawlers.greenhouse import GreenhouseFetcher
 from app.crawlers.lever import LeverFetcher
-from app.db.models import ATSType, Company, CrawlStatus, EmploymentType, ExperienceLevel, Job, RemoteType
+from app.db.models import (
+    ATSType,
+    Company,
+    CrawlStatus,
+    EmploymentType,
+    ExperienceLevel,
+    Job,
+)
 from app.services.ingest import ingest_company
-from app.services.normalizer import clean_html_to_text, normalize_job, parse_location
+from app.services.normalizer import normalize_job
 
 settings = get_settings()
 test_engine = create_async_engine(
