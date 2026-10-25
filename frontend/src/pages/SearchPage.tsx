@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, SlidersHorizontal, X } from 'lucide-react';
 import { FilterRail } from '../components/FilterRail';
 import { JobDetailSlideOver } from '../components/JobDetailSlideOver';
 import { JobRow } from '../components/JobRow';
@@ -43,7 +43,7 @@ export const SearchPage: React.FC = () => {
     setInputQuery(params.q || '');
   }
 
-  const { data, isLoading, isError, error } = useSearch(params);
+  const { data, isLoading, isError, error, refetch } = useSearch(params);
 
   // Sync state changes to URL query parameters
   const updateParams = (updates: Partial<SearchParams>): void => {
@@ -61,7 +61,13 @@ export const SearchPage: React.FC = () => {
   };
 
   const handleSearchSubmit = (text: string): void => {
-    updateParams({ q: text.trim() || undefined, page: 1 });
+    const clean = text.trim();
+    updateParams({ q: clean || undefined, page: 1 });
+  };
+
+  const handleClearQuery = (): void => {
+    setInputQuery('');
+    updateParams({ q: undefined, page: 1 });
   };
 
   const handleResetFilters = (): void => {
@@ -117,12 +123,12 @@ export const SearchPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsMobileFiltersOpen(true)}
-          className="md:hidden flex items-center justify-center gap-2 rounded-control border border-border bg-surface px-4 py-2 font-sans text-13 text-text"
+          className="md:hidden flex items-center justify-center gap-2 rounded border border-border/80 bg-surface px-3 py-1.5 font-sans text-13 text-text"
         >
           <SlidersHorizontal size={14} strokeWidth={1.5} />
           <span>Filters</span>
           {activeFiltersCount > 0 && (
-            <span className="rounded-full bg-accent-subdued px-1.5 py-0.2 font-mono text-12 text-accent">
+            <span className="rounded-full bg-accent-subdued px-1.5 py-0.2 font-mono text-11 text-accent font-medium">
               {activeFiltersCount}
             </span>
           )}
@@ -144,35 +150,53 @@ export const SearchPage: React.FC = () => {
         {/* Right Main Column: Results */}
         <main className="flex-1 min-w-0">
           {/* Results Metadata Summary */}
-          <div className="flex items-center justify-between pb-3 border-b border-border mb-0.5">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pb-3 border-b border-border/80 mb-1">
+            <div className="flex items-center gap-2 flex-wrap min-w-0">
               <span className="font-mono text-13 font-medium text-text">
                 {isLoading ? 'Searching...' : `${data?.total.toLocaleString() ?? 0} positions found`}
               </span>
+
+              {/* Active Query Pill */}
               {params.q && (
-                <span className="font-sans text-13 text-text-muted truncate max-w-xs">
-                  for "{params.q}"
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/40 bg-accent-subdued px-2.5 py-0.5 font-mono text-12 text-accent">
+                  <span className="truncate max-w-[200px] sm:max-w-xs">{params.q}</span>
+                  <button
+                    type="button"
+                    onClick={handleClearQuery}
+                    className="p-0.5 hover:text-text focus:outline-none"
+                    title="Clear search query"
+                  >
+                    <X size={12} strokeWidth={2} />
+                  </button>
                 </span>
               )}
             </div>
 
             {/* Keyboard shortcut tip */}
-            <span className="hidden lg:inline font-mono text-12 text-text-muted/60">
-              Navigate with <kbd className="rounded border border-border px-1">j</kbd> / <kbd className="rounded border border-border px-1">k</kbd>, press <kbd className="rounded border border-border px-1">Enter</kbd> to inspect
+            <span className="hidden lg:inline font-mono text-12 text-text-muted/60 select-none">
+              <kbd className="rounded border border-border px-1">j</kbd> / <kbd className="rounded border border-border px-1">k</kbd> to navigate, <kbd className="rounded border border-border px-1">Enter</kbd> to inspect
             </span>
           </div>
 
           {/* Error State */}
           {isError && (
-            <div className="p-8 text-center border-b border-border bg-surface rounded-control mt-4">
-              <p className="font-sans text-14 text-text mb-1">Could not fetch positions</p>
-              <p className="font-mono text-12 text-text-muted">{error?.message || 'Server error'}</p>
+            <div className="p-8 text-center border border-border rounded-surface bg-surface/50 my-4 space-y-2">
+              <p className="font-sans text-14 font-medium text-text">Could not fetch positions</p>
+              <p className="font-mono text-12 text-text-muted">{error?.message || 'Server connection error'}</p>
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="inline-flex items-center gap-1.5 rounded bg-accent px-3 py-1.5 font-sans text-12 font-medium text-white hover:bg-accent-hover transition-colors mt-2"
+              >
+                <RotateCcw size={13} strokeWidth={1.5} />
+                <span>Retry Search</span>
+              </button>
             </div>
           )}
 
           {/* Loading Skeletons */}
           {isLoading && (
-            <div className="border border-border rounded-surface overflow-hidden divide-y divide-border">
+            <div className="border border-border/80 rounded-surface overflow-hidden divide-y divide-border/60">
               <SkeletonRow />
               <SkeletonRow />
               <SkeletonRow />
@@ -192,7 +216,7 @@ export const SearchPage: React.FC = () => {
 
           {/* Dense Job Rows List */}
           {!isLoading && !isError && data && data.items.length > 0 && (
-            <div className="border border-border rounded-surface overflow-hidden">
+            <div className="border border-border/80 rounded-surface overflow-hidden divide-y divide-border/60">
               {data.items.map((job, idx) => (
                 <JobRow
                   key={job.job_id}
@@ -211,14 +235,14 @@ export const SearchPage: React.FC = () => {
 
           {/* Pagination Controls */}
           {!isLoading && data && data.total_pages > 1 && (
-            <div className="flex items-center justify-between pt-6 border-t border-border mt-6">
+            <div className="flex items-center justify-between pt-5 border-t border-border/80 mt-6">
               <button
                 type="button"
                 disabled={params.page! <= 1}
                 onClick={() => updateParams({ page: Math.max(1, (params.page || 1) - 1) })}
-                className="flex items-center gap-1.5 rounded-control border border-border bg-surface px-3 py-1.5 font-sans text-13 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
+                className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 font-sans text-12 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
               >
-                <ChevronLeft size={14} strokeWidth={1.5} />
+                <ChevronLeft size={13} strokeWidth={1.5} />
                 <span>Previous</span>
               </button>
 
@@ -230,10 +254,10 @@ export const SearchPage: React.FC = () => {
                 type="button"
                 disabled={params.page! >= data.total_pages}
                 onClick={() => updateParams({ page: (params.page || 1) + 1 })}
-                className="flex items-center gap-1.5 rounded-control border border-border bg-surface px-3 py-1.5 font-sans text-13 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
+                className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 font-sans text-12 text-text disabled:opacity-30 disabled:pointer-events-none hover:border-border-strong transition-colors"
               >
                 <span>Next</span>
-                <ChevronRight size={14} strokeWidth={1.5} />
+                <ChevronRight size={13} strokeWidth={1.5} />
               </button>
             </div>
           )}
@@ -252,3 +276,5 @@ export const SearchPage: React.FC = () => {
     </div>
   );
 };
+
+export default SearchPage;
