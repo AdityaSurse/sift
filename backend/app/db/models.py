@@ -173,6 +173,12 @@ class Job(Base):
     role_category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     # Normalized skills array extracted via LLM (e.g. ["Python", "Rust", "PostgreSQL"])
     skills: Mapped[Optional[List[str]]] = mapped_column(ARRAY(Text), nullable=True)
+    # SHA-256 hash of description_text to detect modifications and prevent redundant LLM enrichment
+    description_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    # Timestamp when LLM enrichment last successfully parsed this job
+    enriched_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     # Published date reported by the ATS if available
     posted_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True

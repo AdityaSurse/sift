@@ -68,6 +68,8 @@ class Settings(BaseSettings):
     # LLM Enrichment Settings
     sift_llm_provider: str = Field(default="gemini", description="LLM provider: gemini | openai | anthropic")
     sift_llm_model: str = Field(default="gemini-1.5-flash", description="Model name for job extraction")
+    sift_embedding_model: str = Field(default="text-embedding-004", description="Model name for embeddings")
+    sift_llm_rpm_limit: int = Field(default=15, description="Requests per minute rate limit for LLM calls")
     gemini_api_key: str = Field(default="", description="Google Gemini API key")
     openai_api_key: str = Field(default="", description="OpenAI API key")
     anthropic_api_key: str = Field(default="", description="Anthropic API key")
