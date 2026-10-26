@@ -39,11 +39,11 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-6 sm:gap-10">
           <Link
             to="/"
-            className="flex items-center gap-2 text-text hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-full"
+            className="group flex items-center gap-2.5 text-text hover:text-accent transition-colors duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-full"
           >
             {/* Sift Geometric Spark Mark */}
-            <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-accent-subdued text-accent border border-accent/30 font-bold text-14 select-none">
-              <Sparkles size={15} strokeWidth={2} />
+            <div className="flex items-center justify-center h-7 w-7 rounded-xl bg-accent-subdued text-accent border border-accent/40 font-bold text-14 select-none group-hover:scale-105 transition-transform duration-150 shadow-2xs">
+              <Sparkles size={14} strokeWidth={2} />
             </div>
             <span className="font-sans text-16 font-bold tracking-tight text-text">
               Sift
@@ -54,13 +54,13 @@ export const Header: React.FC<HeaderProps> = ({
           <nav className="flex items-center gap-1 sm:gap-1.5 text-13 font-sans">
             <Link
               to="/jobs"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-150 ease-editorial ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-150 ease-editorial ${
                 isJobsActive
-                  ? 'text-text font-medium bg-surface border border-border shadow-sm'
+                  ? 'text-text font-semibold bg-surface border border-border shadow-xs'
                   : 'text-text-muted hover:text-text hover:bg-surface-subdued'
               }`}
             >
-              <Briefcase size={13} strokeWidth={1.5} />
+              <Briefcase size={13} strokeWidth={1.5} className={isJobsActive ? 'text-accent' : ''} />
               <span>Jobs</span>
             </Link>
 
@@ -75,16 +75,16 @@ export const Header: React.FC<HeaderProps> = ({
 
             <Link
               to="/saved"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors duration-150 ease-editorial ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-150 ease-editorial ${
                 isSavedActive
-                  ? 'text-text font-medium bg-surface border border-border shadow-sm'
+                  ? 'text-text font-semibold bg-surface border border-border shadow-xs'
                   : 'text-text-muted hover:text-text hover:bg-surface-subdued'
               }`}
             >
-              <Bookmark size={13} strokeWidth={1.5} />
+              <Bookmark size={13} strokeWidth={1.5} className={isSavedActive ? 'text-accent' : ''} />
               <span>Saved</span>
               {savedJobs.length > 0 && (
-                <span className="ml-0.5 rounded-full bg-accent-subdued px-1.5 py-0.2 font-mono text-11 text-accent font-medium">
+                <span className="ml-0.5 rounded-full bg-accent-subdued border border-accent/30 px-1.5 py-0.2 font-mono text-11 text-accent font-semibold">
                   {savedJobs.length}
                 </span>
               )}

@@ -71,14 +71,15 @@ export const LandingPage: React.FC = () => {
       {/* 3. Hero Section */}
       <section className="relative px-4 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-24 max-w-5xl mx-auto text-center">
         {/* Subtle pill badge */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent-subdued px-3.5 py-1 text-accent font-sans text-12 font-medium mb-6">
+        <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent-subdued px-3.5 py-1 text-accent font-sans text-12 font-medium mb-6 shadow-2xs">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
           <Sparkles size={13} strokeWidth={2} />
           <span>Polite, Direct ATS Ingestion Engine</span>
         </div>
 
-        {/* Editorial Headline with Instrument Serif */}
+        {/* Editorial Headline with Instrument Serif & Aegean Accent Highlight */}
         <h1 className="font-serif text-48 sm:text-64 md:text-72 text-text font-normal tracking-tight leading-[1.04] max-w-4xl mx-auto mb-5">
-          Get hired directly through verified company <span className="italic">ATS career portals</span>.
+          Get hired directly through verified company <span className="italic text-accent font-serif">ATS career portals</span>.
         </h1>
 
         {/* Subhead */}
@@ -92,8 +93,8 @@ export const LandingPage: React.FC = () => {
           onSubmit={handleSearchSubmit}
           className="relative max-w-2xl mx-auto mb-5 group"
         >
-          <div className="relative flex items-center rounded-full border border-border/80 bg-surface shadow-card p-1.5 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all duration-200 ease-editorial">
-            <div className="pl-4 pr-2 text-text-muted">
+          <div className="relative flex items-center rounded-full border border-border bg-surface shadow-card p-1.5 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15 transition-all duration-200 ease-editorial">
+            <div className="pl-4 pr-2 text-text-muted group-focus-within:text-accent transition-colors">
               <Search size={18} strokeWidth={1.5} />
             </div>
 
@@ -131,7 +132,7 @@ export const LandingPage: React.FC = () => {
                 setQuery(chip.query);
                 navigate(`/jobs?q=${encodeURIComponent(chip.query)}`);
               }}
-              className="rounded-full border border-border/80 bg-surface px-3.5 py-1 font-sans text-12 text-text-muted hover:border-accent/40 hover:text-accent hover:shadow-xs transition-all duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+              className="rounded-full border border-border/80 bg-surface px-3.5 py-1 font-sans text-12 text-text-muted hover:border-accent/50 hover:text-accent hover:bg-accent-subdued/30 hover:-translate-y-0.5 transition-all duration-150 ease-editorial focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-2xs"
             >
               {chip.label}
             </button>

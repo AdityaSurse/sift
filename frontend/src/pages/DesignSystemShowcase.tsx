@@ -64,12 +64,12 @@ export const DesignSystemShowcase: React.FC = () => {
       <main className="mx-auto max-w-6xl px-6 py-12 space-y-16">
         {/* Section 1: Editorial Display Headline (Instrument Serif) */}
         <section className="space-y-4 max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-control border border-border bg-surface px-2.5 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            <span className="font-mono text-12 text-text-muted">Direct Career Index</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent-subdued px-3 py-1 shadow-2xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+            <span className="font-mono text-12 text-accent font-medium">Direct Career Index Specimen</span>
           </div>
           <h1 className="font-serif text-56 leading-[1.05] tracking-[-0.025em] text-text">
-            Find the jobs and internships that never make it to LinkedIn.
+            Find the jobs and internships that never make it to <span className="italic text-accent">LinkedIn</span>.
           </h1>
           <p className="font-sans text-16 text-text-muted leading-relaxed max-w-2xl">
             Sift aggregates unlisted openings directly from verified company career portals and ATS platforms.
@@ -80,48 +80,48 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* Section 2: SearchBar & Command Trigger Preview */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-sans text-20 font-medium text-text">1. Search & Filter Bar</h2>
-            <span className="font-mono text-12 text-text-muted">Component: SearchBar</span>
+            <h2 className="font-sans text-20 font-semibold text-text">1. Search & Filter Bar</h2>
+            <span className="font-mono text-12 text-accent font-medium">Component: SearchBar Capsule</span>
           </div>
 
-          <div className="relative rounded-surface border border-border bg-surface p-2 transition-all duration-150 focus-within:border-accent">
-            <div className="flex items-center gap-3 px-3 py-2">
-              <Search size={16} strokeWidth={1.5} className="text-text-muted" />
+          <div className="relative rounded-full border border-border bg-surface p-1.5 shadow-card transition-all duration-200 focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
+            <div className="flex items-center gap-3 px-3 py-1">
+              <Search size={17} strokeWidth={1.5} className="text-text-muted" />
               <input
                 id="search-input"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Ask in natural language: 'Founding backend engineer in NYC paying >$180k with Go or Rust'..."
-                className="w-full bg-transparent font-sans text-14 text-text placeholder:text-text-muted outline-none"
+                className="w-full bg-transparent font-sans text-14 text-text placeholder:text-text-muted/60 outline-none"
               />
-              <div className="flex items-center gap-1 rounded-control border border-border bg-bg px-2 py-0.5 font-mono text-12 text-text-muted">
-                <Command size={12} strokeWidth={1.5} />
+              <div className="flex items-center gap-1 rounded-full border border-border bg-surface-subdued px-2.5 py-0.5 font-mono text-11 text-text-muted select-none">
+                <Command size={11} strokeWidth={1.5} />
                 <span>K</span>
               </div>
-              <button className="flex items-center gap-1.5 rounded-control bg-accent px-4 py-2 font-sans text-13 font-medium text-white hover:bg-accent-hover transition-colors duration-150">
+              <button className="flex items-center gap-1.5 rounded-full bg-btn-primary px-5 py-2 font-sans text-13 font-semibold text-btn-primary-text hover:bg-btn-primary-hover active:scale-[0.98] transition-all shadow-sm">
                 <span>Search</span>
-                <ArrowUpRight size={14} strokeWidth={1.5} />
+                <ArrowUpRight size={13} strokeWidth={2} />
               </button>
             </div>
           </div>
 
           {/* Filter Chips Bar */}
           <div className="flex flex-wrap items-center gap-2 pt-2">
-            <span className="font-mono text-12 text-text-muted mr-2">Filter:</span>
+            <span className="font-sans text-12 text-text-muted font-medium mr-1 select-none">Filters:</span>
             {chips.map((chip) => {
               const active = selectedChip === chip;
               return (
                 <button
                   key={chip}
                   onClick={() => setSelectedChip(chip)}
-                  className={`flex items-center gap-1.5 rounded-control px-3 py-1 font-sans text-13 transition-all duration-150 ease-editorial ${
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 font-sans text-12 transition-all duration-150 ease-editorial ${
                     active
-                      ? 'border border-accent bg-accent-subdued text-text'
-                      : 'border border-border bg-surface text-text-muted hover:border-border-strong hover:text-text'
+                      ? 'border border-accent/40 bg-accent-subdued text-accent font-semibold shadow-2xs'
+                      : 'border border-border/80 bg-surface text-text-muted hover:border-accent/40 hover:text-accent'
                   }`}
                 >
-                  {active && <Check size={12} strokeWidth={1.5} className="text-accent" />}
+                  {active && <Check size={12} strokeWidth={2} className="text-accent" />}
                   <span>{chip}</span>
                 </button>
               );
@@ -132,43 +132,49 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* Section 3: JobRow Specimen (Dense, Information-Dense Editorial Layout) */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-sans text-20 font-medium text-text">2. Job Listing Row</h2>
-            <span className="font-mono text-12 text-text-muted">Component: JobRow</span>
+            <h2 className="font-sans text-20 font-semibold text-text">2. Job Listing Row</h2>
+            <span className="font-mono text-12 text-accent font-medium">Component: JobRow</span>
           </div>
 
-          <div className="rounded-surface border border-border bg-surface divide-y divide-border overflow-hidden">
+          <div className="rounded-2xl border border-border/80 bg-surface divide-y divide-border/70 overflow-hidden shadow-card">
             {/* Row 1 */}
-            <article className="group p-5 hover:bg-bg/40 transition-colors duration-150 ease-editorial">
+            <article className="group p-5 hover:bg-surface-subdued/70 transition-colors duration-150 ease-editorial">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-3">
-                    <span className="font-sans text-16 font-medium text-text group-hover:text-accent transition-colors duration-150">
-                      Senior Distributed Systems Engineer
-                    </span>
-                    <span className="rounded-control border border-border bg-bg px-2 py-0.5 font-mono text-12 text-text-muted">
-                      Greenhouse
-                    </span>
-                    <span className="rounded-control bg-accent-subdued border border-accent/30 px-2 py-0.5 font-mono text-12 text-text">
-                      98% match
-                    </span>
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-xl border border-teal-500/25 bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold text-15 select-none shadow-2xs">
+                    L
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-13 text-text-muted">
-                    <div className="flex items-center gap-1.5">
-                      <Building2 size={14} strokeWidth={1.5} />
-                      <span className="text-text">Linear</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="font-sans text-16 font-semibold text-text group-hover:text-accent transition-colors duration-150">
+                        Senior Distributed Systems Engineer
+                      </span>
+                      <span className="rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 font-mono text-11 text-emerald-700 dark:text-emerald-300 font-medium">
+                        Greenhouse Direct
+                      </span>
+                      <span className="rounded-full bg-accent-subdued border border-accent/30 px-2.5 py-0.5 font-mono text-11 text-accent font-semibold">
+                        98% match
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin size={14} strokeWidth={1.5} />
-                      <span>San Francisco / Remote</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <DollarSign size={14} strokeWidth={1.5} />
-                      <span className="text-text">$190k – $240k</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>Indexed 2h ago</span>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-sans text-13 text-text-muted">
+                      <div className="flex items-center gap-1.5">
+                        <Building2 size={13} strokeWidth={1.5} />
+                        <span className="text-text font-medium">Linear</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <MapPin size={13} strokeWidth={1.5} />
+                        <span>San Francisco / Remote</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <DollarSign size={13} strokeWidth={1.5} />
+                        <span className="text-text font-medium">$190k – $240k</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={13} strokeWidth={1.5} />
+                        <span>Indexed 2h ago</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -178,44 +184,50 @@ export const DesignSystemShowcase: React.FC = () => {
                     href="https://boards.greenhouse.io"
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 rounded-control border border-border bg-surface px-3 py-1.5 font-sans text-13 font-medium text-text hover:border-accent hover:text-accent transition-colors duration-150"
+                    className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-13 font-medium text-text hover:border-accent hover:text-accent transition-colors duration-150 shadow-xs"
                   >
                     <span>Direct Apply</span>
-                    <ExternalLink size={14} strokeWidth={1.5} />
+                    <ExternalLink size={13} strokeWidth={1.5} />
                   </a>
                 </div>
               </div>
             </article>
 
             {/* Row 2 */}
-            <article className="group p-5 hover:bg-bg/40 transition-colors duration-150 ease-editorial">
+            <article className="group p-5 hover:bg-surface-subdued/70 transition-colors duration-150 ease-editorial">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-3">
-                    <span className="font-sans text-16 font-medium text-text group-hover:text-accent transition-colors duration-150">
-                      Founding AI Inference Engineer
-                    </span>
-                    <span className="rounded-control border border-border bg-bg px-2 py-0.5 font-mono text-12 text-text-muted">
-                      Ashby
-                    </span>
+                <div className="flex items-start gap-3.5 min-w-0">
+                  <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-xl border border-sky-500/25 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-15 select-none shadow-2xs">
+                    T
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-13 text-text-muted">
-                    <div className="flex items-center gap-1.5">
-                      <Building2 size={14} strokeWidth={1.5} />
-                      <span className="text-text">Together AI</span>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="font-sans text-16 font-semibold text-text group-hover:text-accent transition-colors duration-150">
+                        Founding AI Inference Engineer
+                      </span>
+                      <span className="rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2.5 py-0.5 font-mono text-11 text-cyan-700 dark:text-cyan-300 font-medium">
+                        Ashby Direct
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin size={14} strokeWidth={1.5} />
-                      <span>New York, NY</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <DollarSign size={14} strokeWidth={1.5} />
-                      <span className="text-text">$210k – $260k + 0.5%</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>Indexed 5h ago</span>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-sans text-13 text-text-muted">
+                      <div className="flex items-center gap-1.5">
+                        <Building2 size={13} strokeWidth={1.5} />
+                        <span className="text-text font-medium">Together AI</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <MapPin size={13} strokeWidth={1.5} />
+                        <span>New York, NY</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <DollarSign size={13} strokeWidth={1.5} />
+                        <span className="text-text font-medium">$210k – $260k + 0.5%</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={13} strokeWidth={1.5} />
+                        <span>Indexed 5h ago</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -225,10 +237,10 @@ export const DesignSystemShowcase: React.FC = () => {
                     href="https://ashbyhq.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-1.5 rounded-control border border-border bg-surface px-3 py-1.5 font-sans text-13 font-medium text-text hover:border-accent hover:text-accent transition-colors duration-150"
+                    className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-1.5 font-sans text-13 font-medium text-text hover:border-accent hover:text-accent transition-colors duration-150 shadow-xs"
                   >
                     <span>Direct Apply</span>
-                    <ExternalLink size={14} strokeWidth={1.5} />
+                    <ExternalLink size={13} strokeWidth={1.5} />
                   </a>
                 </div>
               </div>
@@ -239,32 +251,32 @@ export const DesignSystemShowcase: React.FC = () => {
         {/* Section 4: Token Grid Verification Matrix */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-sans text-20 font-medium text-text">3. Design Tokens Verification Matrix</h2>
-            <span className="font-mono text-12 text-text-muted">Tokens Contract</span>
+            <h2 className="font-sans text-20 font-semibold text-text">3. Design Tokens Verification Matrix</h2>
+            <span className="font-mono text-12 text-accent font-medium">Tokens Contract</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Color Swatches */}
-            <div className="rounded-surface border border-border bg-surface p-5 space-y-3">
-              <span className="font-mono text-12 text-text-muted uppercase">Color Tokens</span>
+            <div className="rounded-2xl border border-border/80 bg-surface p-5 space-y-3 shadow-card">
+              <span className="font-mono text-12 text-text-muted uppercase font-semibold">Color Tokens</span>
               <div className="space-y-2">
-                <div className="flex items-center justify-between p-2 rounded-control border border-border bg-bg">
-                  <span className="font-mono text-12">bg</span>
+                <div className="flex items-center justify-between p-2 rounded-xl border border-border bg-bg">
+                  <span className="font-mono text-12 font-medium">bg</span>
                   <span className="font-mono text-12 text-text-muted">var(--bg)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control border border-border bg-surface">
-                  <span className="font-mono text-12">surface</span>
+                <div className="flex items-center justify-between p-2 rounded-xl border border-border bg-surface">
+                  <span className="font-mono text-12 font-medium">surface</span>
                   <span className="font-mono text-12 text-text-muted">var(--surface)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control bg-accent text-white font-medium">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-accent text-white font-medium shadow-xs">
                   <span className="font-mono text-12">accent (Aegean Teal)</span>
                   <span className="font-mono text-12">var(--accent)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control bg-btn-primary text-btn-primary-text font-medium">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-btn-primary text-btn-primary-text font-medium shadow-xs">
                   <span className="font-mono text-12">btn-primary (Caspian Slate)</span>
                   <span className="font-mono text-12">var(--btn-primary)</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-control bg-accent-subdued border border-accent/30 text-accent font-medium">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-accent-subdued border border-accent/30 text-accent font-medium">
                   <span className="font-mono text-12">accent-subdued</span>
                   <span className="font-mono text-12">tint wash</span>
                 </div>
@@ -272,26 +284,26 @@ export const DesignSystemShowcase: React.FC = () => {
             </div>
 
             {/* Typography Scale */}
-            <div className="rounded-surface border border-border bg-surface p-5 space-y-3">
-              <span className="font-mono text-12 text-text-muted uppercase">Type Hierarchy</span>
+            <div className="rounded-2xl border border-border/80 bg-surface p-5 space-y-3 shadow-card">
+              <span className="font-mono text-12 text-text-muted uppercase font-semibold">Type Hierarchy</span>
               <div className="space-y-1.5">
                 <div className="font-serif text-32 text-text leading-tight">Headline 32px Serif</div>
-                <div className="font-sans text-20 font-medium text-text">Title 20px Sans</div>
+                <div className="font-sans text-20 font-semibold text-text">Title 20px Sans</div>
                 <div className="font-sans text-16 text-text">Body 16px Sans</div>
-                <div className="font-sans text-14 text-text-muted">Label 14px Sans</div>
+                <div className="font-sans text-14 text-text-muted font-medium">Label 14px Sans</div>
                 <div className="font-mono text-13 text-text">Metadata 13px Mono</div>
                 <div className="font-mono text-12 text-text-muted">Caption 12px Mono</div>
               </div>
             </div>
 
             {/* Elevation & Borders */}
-            <div className="rounded-surface border border-border bg-surface p-5 space-y-3">
-              <span className="font-mono text-12 text-text-muted uppercase">Hairline vs Popover</span>
+            <div className="rounded-2xl border border-border/80 bg-surface p-5 space-y-3 shadow-card">
+              <span className="font-mono text-12 text-text-muted uppercase font-semibold">Hairline vs Popover</span>
               <div className="space-y-3">
-                <div className="rounded-surface border border-border p-3 text-center font-mono text-12 text-text-muted">
-                  Standard Surface: 1px hairline border, 0px shadow
+                <div className="rounded-xl border border-border p-3 text-center font-mono text-12 text-text-muted">
+                  Standard Surface: 1px hairline border, subtle ambient elevation
                 </div>
-                <div className="rounded-surface border border-border bg-surface p-3 text-center font-mono text-12 text-text shadow-popover">
+                <div className="rounded-xl border border-border bg-surface p-3 text-center font-mono text-12 text-text shadow-popover">
                   Floating Popover: shadow-popover enabled
                 </div>
               </div>

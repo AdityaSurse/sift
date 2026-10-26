@@ -12,59 +12,59 @@
  * Shifted and inspired by Simplify's clear modern information architecture
  */
 :root {
-  /* Default: Light Theme (Crisp Porcelain Canvas) */
+  /* Default: Light Theme (Crisp Porcelain Canvas with Vibrant Aegean Marine Teal) */
   --bg: #FAFBFC;
   --surface: #FFFFFF;
-  --surface-subdued: #F1F5F8;
-  --border: rgba(15, 23, 42, 0.08);
+  --surface-subdued: #F3F6F9;
+  --border: rgba(15, 23, 42, 0.07);
   --border-strong: #CBD5E1;
-  --text: #0A0E14;
-  --text-muted: #536474;
-  --accent: #0A7D87;
-  --accent-hover: #08666E;
-  --accent-subdued: rgba(10, 125, 135, 0.08);
-  --btn-primary: #0A262E;
-  --btn-primary-hover: #05181E;
+  --text: #090D12;
+  --text-muted: #4B5E70;
+  --accent: #008796;
+  --accent-hover: #007380;
+  --accent-subdued: rgba(0, 135, 150, 0.09);
+  --btn-primary: #082229;
+  --btn-primary-hover: #03151A;
   --btn-primary-text: #FFFFFF;
-  --shadow-card: 0 2px 8px -2px rgba(10, 25, 35, 0.05), 0 1px 3px rgba(10, 25, 35, 0.03);
+  --shadow-card: 0 1px 3px 0 rgba(10, 25, 35, 0.04), 0 4px 12px -2px rgba(10, 25, 35, 0.03);
   --shadow-popover: 0 12px 36px -6px rgba(10, 25, 35, 0.12), 0 4px 12px -2px rgba(10, 25, 35, 0.05);
 }
 
 html.light {
   --bg: #FAFBFC;
   --surface: #FFFFFF;
-  --surface-subdued: #F1F5F8;
-  --border: rgba(15, 23, 42, 0.08);
+  --surface-subdued: #F3F6F9;
+  --border: rgba(15, 23, 42, 0.07);
   --border-strong: #CBD5E1;
-  --text: #0A0E14;
-  --text-muted: #536474;
-  --accent: #0A7D87;
-  --accent-hover: #08666E;
-  --accent-subdued: rgba(10, 125, 135, 0.08);
-  --btn-primary: #0A262E;
-  --btn-primary-hover: #05181E;
+  --text: #090D12;
+  --text-muted: #4B5E70;
+  --accent: #008796;
+  --accent-hover: #007380;
+  --accent-subdued: rgba(0, 135, 150, 0.09);
+  --btn-primary: #082229;
+  --btn-primary-hover: #03151A;
   --btn-primary-text: #FFFFFF;
-  --shadow-card: 0 2px 8px -2px rgba(10, 25, 35, 0.05), 0 1px 3px rgba(10, 25, 35, 0.03);
+  --shadow-card: 0 1px 3px 0 rgba(10, 25, 35, 0.04), 0 4px 12px -2px rgba(10, 25, 35, 0.03);
   --shadow-popover: 0 12px 36px -6px rgba(10, 25, 35, 0.12), 0 4px 12px -2px rgba(10, 25, 35, 0.05);
 }
 
 html.dark {
-  /* Dark Theme (Obsidian Midnight with Vivid Marine Cyan Accents) */
-  --bg: #080C10;
+  /* Dark Theme (Obsidian Midnight with Luminous Cyan Accents) */
+  --bg: #070A0E;
   --surface: #0E141D;
   --surface-subdued: #141C26;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: #2E3A4B;
   --text: #F8FAFC;
   --text-muted: #94A3B8;
-  --accent: #18C5D2;
-  --accent-hover: #14B3BF;
-  --accent-subdued: rgba(24, 197, 210, 0.12);
+  --accent: #22D3EE;
+  --accent-hover: #06B6D4;
+  --accent-subdued: rgba(34, 211, 238, 0.12);
   --btn-primary: #14B8A6;
   --btn-primary-hover: #0D9488;
   --btn-primary-text: #04151A;
-  --shadow-card: 0 2px 8px -2px rgba(0, 0, 0, 0.3);
-  --shadow-popover: 0 16px 40px -8px rgba(0, 0, 0, 0.65);
+  --shadow-card: 0 2px 8px -2px rgba(0, 0, 0, 0.35);
+  --shadow-popover: 0 16px 40px -8px rgba(0, 0, 0, 0.7);
 }
 
 body {

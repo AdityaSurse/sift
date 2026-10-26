@@ -24,6 +24,27 @@ function formatJobDate(dateStr?: string | null): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/** Deterministically assigns a vibrant, accessible editorial monogram theme per company */
+function getMonogramTheme(companyName?: string): { bg: string; text: string; border: string } {
+  const PALETTES = [
+    { bg: 'bg-teal-500/10', text: 'text-teal-600 dark:text-teal-400', border: 'border-teal-500/25' },
+    { bg: 'bg-sky-500/10', text: 'text-sky-600 dark:text-sky-400', border: 'border-sky-500/25' },
+    { bg: 'bg-cyan-500/10', text: 'text-cyan-600 dark:text-cyan-400', border: 'border-cyan-500/25' },
+    { bg: 'bg-indigo-500/10', text: 'text-indigo-600 dark:text-indigo-400', border: 'border-indigo-500/25' },
+    { bg: 'bg-emerald-500/10', text: 'text-emerald-600 dark:text-emerald-400', border: 'border-emerald-500/25' },
+    { bg: 'bg-amber-500/10', text: 'text-amber-600 dark:text-amber-400', border: 'border-amber-500/25' },
+    { bg: 'bg-rose-500/10', text: 'text-rose-600 dark:text-rose-400', border: 'border-rose-500/25' },
+  ];
+  if (!companyName) return PALETTES[0];
+  let hash = 0;
+  for (let i = 0; i < companyName.length; i++) {
+    hash = (hash << 5) - hash + companyName.charCodeAt(i);
+    hash |= 0;
+  }
+  const index = Math.abs(hash) % PALETTES.length;
+  return PALETTES[index];
+}
+
 /**
  * JobDetailPane Component
  * Why: Renders full position details inline in the desktop two-pane layout,
@@ -55,6 +76,7 @@ export const JobDetailPane: React.FC<JobDetailPaneProps> = ({
   }
 
   const monogram = (job?.company_name || 'C').charAt(0).toUpperCase();
+  const monogramTheme = getMonogramTheme(job?.company_name);
 
   return (
     <article className="h-full flex flex-col justify-between border border-border/80 rounded-2xl bg-surface shadow-card overflow-hidden">
@@ -93,7 +115,7 @@ export const JobDetailPane: React.FC<JobDetailPaneProps> = ({
             <div className="flex items-start justify-between gap-4 pb-5 border-b border-border/70">
               <div className="flex items-start gap-3.5 min-w-0">
                 <div
-                  className="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-xl bg-btn-primary text-btn-primary-text font-bold text-18 select-none shadow-sm"
+                  className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-xl border ${monogramTheme.bg} ${monogramTheme.text} ${monogramTheme.border} font-bold text-18 select-none shadow-2xs`}
                   aria-hidden="true"
                 >
                   {monogram}
